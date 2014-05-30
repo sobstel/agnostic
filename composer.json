@@ -1,0 +1,13 @@
+{
+    "require": {
+        "aura/marshal": "1.*",
+        "doctrine/dbal": "2.4.*",
+        "doctrine/orm": "2.4.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Agnostic\\Tests\\": "tests/",
+            "Agnostic\\": "lib/"
+        }
+    }
+}
