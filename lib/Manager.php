@@ -86,44 +86,23 @@ class Manager extends BaseManager
 
             $nativeField = $annotation->id ?: $this->$typeName->getIdentityField();
 
+            $baseInfo = [
+                'native_field' => $nativeField,
+                'foreign_type' => $targetTypeName,
+                'foreign_field' => $annotation->targetId ?: $this->$targetTypeName->getIdentityField(),
+            ];
+
             switch ($annotation->getTag()) {
                 case 'HasMany':
-                    $this->setRelation(
-                        $typeName,
-                        $name,
-                        [
-                            'relationship' => 'has_many',
-                            'native_field' => $nativeField,
-                            'foreign_type' => $targetTypeName,
-                            'foreign_field' => $annotation->targetId ?: $this->$targetTypeName->getIdentityField(),
-                        ]
-                    );
+                    $this->setRelation($typeName, $name, array_merge($baseInfo, ['relationship' => 'has_many']));
                 break;
 
                 case 'BelongsTo':
-                    $this->setRelation(
-                        $typeName,
-                        $name,
-                        [
-                            'relationship' => 'belongs_to',
-                            'native_field' => $nativeField,
-                            'foreign_type' => $targetTypeName,
-                            'foreign_field' => $annotation->targetId ?: $this->$targetTypeName->getIdentityField(),
-                        ]
-                    );
+                    $this->setRelation($typeName, $name, array_merge($baseInfo, ['relationship' => 'belongs_to']));
                 break;
 
                 case 'HasOne':
-                    $this->setRelation(
-                        $typeName,
-                        $name,
-                        [
-                            'relationship' => 'has_one',
-                            'native_field' => $nativeField,
-                            'foreign_type' => $targetTypeName,
-                            'foreign_field' => $annotation->targetId ?: $this->$targetTypeName->getIdentityField(),
-                        ]
-                    );
+                    $this->setRelation($typeName, $name, array_merge($baseInfo, ['relationship' => 'has_one']));
                 break;
 
                 case 'HasManyThrough':
@@ -136,15 +115,15 @@ class Manager extends BaseManager
                     $this->setRelation(
                         $typeName,
                         $name,
-                        [
-                            'relationship' => 'has_many_through',
-                            'native_field' => $nativeField,
-                            'through_type' => $throughType,
-                            'through_native_field' => $annotation->throughId ?: $nativeField,
-                            'through_foreign_field' => $annotation->throughTargetId ?: $this->$targetTypeName->getIdentityField(),
-                            'foreign_type' => $targetTypeName,
-                            'foreign_field' => $annotation->targetId ?: $this->$targetTypeName->getIdentityField(),
-                        ]
+                        array_merge(
+                            $baseInfo,
+                            [
+                                'relationship' => 'has_many_through',
+                                'through_type' => $throughType,
+                                'through_native_field' => $annotation->throughId ?: $nativeField,
+                                'through_foreign_field' => $annotation->throughTargetId ?: $this->$targetTypeName->getIdentityField(),
+                            ]
+                        )
                     );
                 break;
             }
@@ -170,8 +149,6 @@ class Manager extends BaseManager
 
     protected function getEntityClassName($name)
     {
-        $namespaces = $this->entityNamespaces;
-
         foreach ($this->entityNamespaces as $namespace) {
             $className = $namespace.$name;
 
