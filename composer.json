@@ -6,8 +6,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Agnostic\\Tests\\": "tests/",
-            "Agnostic\\": "lib/"
+            "Agnostic\\Tests\\": "tests/src/",
+            "Agnostic\\": "src/"
         }
     }
 }
