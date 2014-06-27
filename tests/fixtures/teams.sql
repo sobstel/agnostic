@@ -1,6 +1,6 @@
 CREATE TABLE `teams` (
   `team_id` int NOT NULL PRIMARY KEY,
-  `title` varchar(20)
+  `name` varchar(20)
 );
 
 INSERT INTO `teams` VALUES ("78","Algeria");

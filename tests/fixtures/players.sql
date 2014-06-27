@@ -1,7 +1,7 @@
 CREATE TABLE `players` (
   `player_id` int NOT NULL PRIMARY KEY,
   `name` varchar(50),
-  `born` varchar(10),
+  `birth_date` varchar(10),
   `position` varchar(10),
   `country` varchar(20)
 );

@@ -6,9 +6,9 @@ CREATE TABLE `matches` (
   `date_time` datetime DEFAULT NULL,
   `team_A_id` int unsigned DEFAULT NULL,
   `team_B_id` int unsigned DEFAULT NULL,
-  `winner` varchar(10) DEFAULT 'yet unknown',
-  `team_A_finalscore` int unsigned DEFAULT NULL,
-  `team_B_finalscore` int unsigned DEFAULT NULL
+  `winner` varchar(6) DEFAULT NULL,
+  `team_A_score` int unsigned DEFAULT NULL,
+  `team_B_score` int unsigned DEFAULT NULL
 );
 
 

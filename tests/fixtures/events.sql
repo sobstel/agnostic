@@ -4,7 +4,7 @@ CREATE TABLE `events` (
   `player_id` int unsigned DEFAULT NULL,
   `team_id` int unsigned DEFAULT NULL,
   `type` char(3) DEFAULT NULL,
-  `game_minute` int unsigned DEFAULT NULL
+  `minute` int unsigned DEFAULT NULL
 );
 
 INSERT INTO `events` VALUES ("1581931","157044","109749","944","G","19");
