@@ -1,4 +1,15 @@
 {
+    "name": "sobstel/agnostic",
+    "description": "Minimalist and opinionated sort-of-ORM",
+    "keywords": ["data", "data mapper", "orm"],
+    "homepage": "https://github.com/sobstel/agnostic",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Przemek Sobstel",
+            "homepage": "http://sobstel.org/"
+        }
+    ],
     "require": {
         "aura/marshal": "1.*",
         "doctrine/dbal": "2.4.*",
