@@ -16,6 +16,8 @@ use Doctrine\Common\Annotations\Annotation;
  *   @Attribute("throughId", required=false, type="string"),
  *   @Attribute("throughTargetId", required=false, type="string"),
  * })
+ *
+ * Either throughEntity or throughType must be provided.
  */
 class HasManyThrough extends Annotation
 {

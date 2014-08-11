@@ -9,10 +9,10 @@ class ManagerTest extends TestCase
 
         $manager->registerEntityNamespace('Agnostic\Tests\Entities', __DIR__.'/Tests/Entities');
 
-        $manager->setTypeFromEntity('Competition');
-        $manager->setTypeFromEntity('Season');
-        $manager->setTypeFromEntity('Round');
-        $manager->setTypeFromEntity('Match');
+        // $manager->setTypeByEntity('Competition');
+        // $manager->setTypeByEntity('Season');
+        // $manager->setTypeByEntity('Round');
+        // $manager->setTypeByEntity('Match');
 
         var_dump($manager->matches);
     }

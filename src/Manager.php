@@ -25,30 +25,19 @@ class Manager extends BaseManager
         parent::__construct(new TypeBuilder($this), new RelationBuilder($this));
     }
 
-    //
-    // public function find($entity_name)
-    // {
-    //     $args = func_get_args();
-
-    //     // TODO
-    // }
-
     public function __get($name)
     {
         // load type from entity on the fly
         if (!isset($this->types[$name])) {
-            // TODO
-
-            // $entityName = array_search($name, $this->entityTypeNames, true);
-            // if ($entityName) {
-            //     $this->setTypeFromEntity($entityName);
-            // }
+            $entityName = Inflector::classify(Inflector::singularize($name));
+            $this->setTypeByEntity($entityName);
         }
 
         return parent::__get($name);
     }
 
-    public function setTypeFromEntity($entityName)
+    // set Aura type using Entity class
+    public function setTypeByEntity($entityName)
     {
         $typeName = $this->getEntityTypeName($entityName);
 
@@ -83,13 +72,12 @@ class Manager extends BaseManager
 
             $name = $annotation->name;
             $targetTypeName = $this->getEntityTypeName($annotation->targetEntity);
-
-            $nativeField = $annotation->id ?: $this->$typeName->getIdentityField();
+            $nativeField = $annotation->id ?: $this->__get($typeName)->getIdentityField();
 
             $baseInfo = [
                 'native_field' => $nativeField,
                 'foreign_type' => $targetTypeName,
-                'foreign_field' => $annotation->targetId ?: $this->$targetTypeName->getIdentityField(),
+                'foreign_field' => $annotation->targetId ?: $this->__get($targetTypeName)->getIdentityField(),
             ];
 
             switch ($annotation->getTag()) {
@@ -147,10 +135,10 @@ class Manager extends BaseManager
         $this->entityNamespaces[] = $namespace;
     }
 
-    protected function getEntityClassName($name)
+    protected function getEntityClassName($entityName)
     {
         foreach ($this->entityNamespaces as $namespace) {
-            $className = $namespace.$name;
+            $className = $namespace.$entityName;
 
             if (class_exists($className, true)) {
                 return $className;
