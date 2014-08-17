@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "aura/marshal": "1.*",
+        "aura/marshal": "1.2.*",
         "doctrine/dbal": "2.4.*",
         "doctrine/orm": "2.4.*"
     },

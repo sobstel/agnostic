@@ -1,11 +1,11 @@
 <?php
 namespace Agnostic\Tests\Entities;
 
-use Agnostic\Entity\GenericEntity;
+use Agnostic\Entity\Entity;
 
 /**
  * @Entity(id="team_id")
  */
-class Team extends GenericEntity
+class Team extends Entity
 {
 }

@@ -3,33 +3,36 @@ namespace Agnostic;
 
 use Aura\Marshal\Manager as BaseManager;
 use Agnostic\Type\Builder as TypeBuilder;
-use Agnostic\Relation\Builder as RelationBuilder;
+use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Agnostic\Entity\Metadata as EntityMetadata;
 use Doctrine\Common\Annotations\SimpleAnnotationReader as AnnotationReader;
 use Doctrine\Common\Inflector\Inflector;
 
+// annotations definitions need to be required explicitly, otherwise they're not visible for SimpleAnnotationReader
 require_once __DIR__.'/Entity/Annotations/Entity.php';
 require_once __DIR__.'/Entity/Annotations/BelongsTo.php';
 require_once __DIR__.'/Entity/Annotations/HasMany.php';
 require_once __DIR__.'/Entity/Annotations/HasManyThrough.php';
 require_once __DIR__.'/Entity/Annotations/HasOne.php';
 
-class Manager extends BaseManager
+class Marshaller extends BaseManager
 {
     protected $entityTypeNames = [];
 
     protected $entityNamespaces = [];
 
+    protected $repositoryNamespaces = [];
+
     public function __construct()
     {
-        parent::__construct(new TypeBuilder($this), new RelationBuilder($this));
+        parent::__construct(new TypeBuilder, new RelationBuilder);
     }
 
     public function __get($name)
     {
         // load type from entity on the fly
         if (!isset($this->types[$name])) {
-            $entityName = Inflector::classify(Inflector::singularize($name));
+            $entityName = $this->getTypeEntityName($name);
             $this->setTypeByEntity($entityName);
         }
 
@@ -37,7 +40,7 @@ class Manager extends BaseManager
     }
 
     // set Aura type using Entity class
-    public function setTypeByEntity($entityName)
+    protected function setTypeByEntity($entityName)
     {
         $typeName = $this->getEntityTypeName($entityName);
 
@@ -118,7 +121,7 @@ class Manager extends BaseManager
         }
     }
 
-    protected function getEntityTypeName($entityName)
+    public function getEntityTypeName($entityName)
     {
         if (!isset($this->entityTypeNames[$entityName])) {
             $typeName = Inflector::pluralize(Inflector::tableize($entityName));
@@ -128,23 +131,49 @@ class Manager extends BaseManager
         return $this->entityTypeNames[$entityName];
     }
 
+    public function getTypeEntityName($typeName)
+    {
+        $entityName = array_search($typeName, $this->entityTypeNames);
+        if (!$entityName) {
+            $entityName = Inflector::classify(Inflector::singularize($typeName));
+            $this->entityTypeNames[$entityName] = $typeName;
+        }
+
+        return $entityName;
+    }
+
     public function registerEntityNamespace($namespace)
     {
         $namespace = rtrim($namespace, '\\').'\\'; // ensure backslash at the end
-
         $this->entityNamespaces[] = $namespace;
     }
 
-    protected function getEntityClassName($entityName)
+    public function registerRepositoryNamespace($namespace)
     {
-        foreach ($this->entityNamespaces as $namespace) {
-            $className = $namespace.$entityName;
+        $namespace = rtrim($namespace, '\\').'\\'; // ensure backslash at the end
+        $this->repositoryNamespaces[] = $namespace;
+    }
+
+    public function getEntityClassName($entityName)
+    {
+        return $this->getClassName($entityName, $this->entityNamespaces, 'Agnostic\Entity\Entity');
+    }
+
+    public function getRepositoryClassName($entityName)
+    {
+        return $this->getClassName($entityName, $this->repositoryNamespaces, 'Agnostic\Entity\EntityRepository');
+    }
+
+    protected function getClassName($name, array $namespaces, $defaultClassname)
+    {
+        foreach ($namespaces as $namespace) {
+            $className = $namespace.$name;
 
             if (class_exists($className, true)) {
                 return $className;
             }
         }
 
-        return 'Agnostic\Entity\GenericEntity'; // default
+        return $defaultClassname;
     }
 }
