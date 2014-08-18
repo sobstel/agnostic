@@ -11,11 +11,11 @@ class EntityManagerTest extends TestCase
         $queryDriver = new \Agnostic\QueryDriver\DoctrineQueryDriver($conn);
 
         $em = new EntityManager($queryDriver);
-        $em->registerEntityNamespace('Agnostic\Tests\Entities', __DIR__.'/Tests/Entities');
-        $em->registerRepositoryNamespace('Agnostic\Tests\Repositories', __DIR__.'/Tests/Repositories');
+        $em->getNameResolver()->registerEntityNamespace('Agnostic\Tests\Entities', __DIR__.'/Tests/Entities');
+        $em->getNameResolver()->registerRepositoryNamespace('Agnostic\Tests\Repositories', __DIR__.'/Tests/Repositories');
 
         $repository = $em->getRepository("Match");
 
-        echo $repository->baseQuery();
+        var_dump($repository->findBy('match_id', [157045, 157046]));
     }
 }

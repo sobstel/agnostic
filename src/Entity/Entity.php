@@ -2,10 +2,11 @@
 namespace Agnostic\Entity;
 
 use Aura\Marshal\Entity\GenericEntity;
+use Agnostic\Entity\MetadataBuilder;
 
-/**
- * @Entity
- */
 class Entity extends GenericEntity
 {
+    static public function configure(MetadataBuilder $mb)
+    {
+    }
 }

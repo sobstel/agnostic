@@ -1,12 +1,11 @@
 <?php
 namespace Agnostic;
 
-use Aura\Marshal\Manager as BaseManager;
+use Aura\Marshal\Manager as BaseMarshaller;
+use Agnostic\EntityManager;
 use Agnostic\Type\Builder as TypeBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
-use Agnostic\Entity\Metadata as EntityMetadata;
 use Doctrine\Common\Annotations\SimpleAnnotationReader as AnnotationReader;
-use Doctrine\Common\Inflector\Inflector;
 
 // annotations definitions need to be required explicitly, otherwise they're not visible for SimpleAnnotationReader
 require_once __DIR__.'/Entity/Annotations/Entity.php';
@@ -15,16 +14,13 @@ require_once __DIR__.'/Entity/Annotations/HasMany.php';
 require_once __DIR__.'/Entity/Annotations/HasManyThrough.php';
 require_once __DIR__.'/Entity/Annotations/HasOne.php';
 
-class Marshaller extends BaseManager
+class Marshaller extends BaseMarshaller
 {
-    protected $entityTypeNames = [];
+    protected $em;
 
-    protected $entityNamespaces = [];
-
-    protected $repositoryNamespaces = [];
-
-    public function __construct()
+    public function __construct(EntityManager $em)
     {
+        $this->em = $em;
         parent::__construct(new TypeBuilder, new RelationBuilder);
     }
 
@@ -42,7 +38,7 @@ class Marshaller extends BaseManager
     // set Aura type using Entity class
     protected function setTypeByEntity($entityName)
     {
-        $typeName = $this->getEntityTypeName($entityName);
+        $typeName = $this->em->getEntityTypeName($entityName);
 
         if (isset($this->types[$typeName])) {
             return ;
@@ -50,7 +46,7 @@ class Marshaller extends BaseManager
 
         $tableizedName = Inflector::tableize($entityName);
 
-        $className = $this->getEntityClassName($entityName);
+        $className = $this->em->getEntityClassName($entityName);
         $class = new \ReflectionClass($className);
 
         $reader = new AnnotationReader();
@@ -74,7 +70,7 @@ class Marshaller extends BaseManager
             }
 
             $name = $annotation->name;
-            $targetTypeName = $this->getEntityTypeName($annotation->targetEntity);
+            $targetTypeName = $this->em->getEntityTypeName($annotation->targetEntity);
             $nativeField = $annotation->id ?: $this->__get($typeName)->getIdentityField();
 
             $baseInfo = [
@@ -98,7 +94,7 @@ class Marshaller extends BaseManager
 
                 case 'HasManyThrough':
                     if ($annotation->throughEntity) {
-                        $throughType = $this->getEntityTypeName($annotation->throughEntity);
+                        $throughType = $this->em->getEntityTypeName($annotation->throughEntity);
                     } else {
                         $throughType = $annotation->throughType;
                     }
@@ -119,61 +115,5 @@ class Marshaller extends BaseManager
                 break;
             }
         }
-    }
-
-    public function getEntityTypeName($entityName)
-    {
-        if (!isset($this->entityTypeNames[$entityName])) {
-            $typeName = Inflector::pluralize(Inflector::tableize($entityName));
-            $this->entityTypeNames[$entityName] = $typeName;
-        }
-
-        return $this->entityTypeNames[$entityName];
-    }
-
-    public function getTypeEntityName($typeName)
-    {
-        $entityName = array_search($typeName, $this->entityTypeNames);
-        if (!$entityName) {
-            $entityName = Inflector::classify(Inflector::singularize($typeName));
-            $this->entityTypeNames[$entityName] = $typeName;
-        }
-
-        return $entityName;
-    }
-
-    public function registerEntityNamespace($namespace)
-    {
-        $namespace = rtrim($namespace, '\\').'\\'; // ensure backslash at the end
-        $this->entityNamespaces[] = $namespace;
-    }
-
-    public function registerRepositoryNamespace($namespace)
-    {
-        $namespace = rtrim($namespace, '\\').'\\'; // ensure backslash at the end
-        $this->repositoryNamespaces[] = $namespace;
-    }
-
-    public function getEntityClassName($entityName)
-    {
-        return $this->getClassName($entityName, $this->entityNamespaces, 'Agnostic\Entity\Entity');
-    }
-
-    public function getRepositoryClassName($entityName)
-    {
-        return $this->getClassName($entityName, $this->repositoryNamespaces, 'Agnostic\Entity\EntityRepository');
-    }
-
-    protected function getClassName($name, array $namespaces, $defaultClassname)
-    {
-        foreach ($namespaces as $namespace) {
-            $className = $namespace.$name;
-
-            if (class_exists($className, true)) {
-                return $className;
-            }
-        }
-
-        return $defaultClassname;
     }
 }

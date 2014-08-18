@@ -16,7 +16,7 @@ class DoctrineQueryDriver implements QueryDriverInterface
     /**
      * @return Doctrine\ORM\QueryBuilder
      */
-    public function baseQuery($typeName)
+    public function createQuery($typeName)
     {
         $queryBuilder = $this->conn->createQueryBuilder();
         $queryBuilder
@@ -27,9 +27,9 @@ class DoctrineQueryDriver implements QueryDriverInterface
         return $queryBuilder;
     }
 
-    public function finderQuery($typeName, $field, array $values)
+    public function createFinderQuery($typeName, $field, array $values)
     {
-        $queryBuilder = $this->baseQuery($typeName);
+        $queryBuilder = $this->createQuery($typeName);
         $queryBuilder
             ->where($queryBuilder->expr()->in($field, $values))
             ;
@@ -37,8 +37,10 @@ class DoctrineQueryDriver implements QueryDriverInterface
         return $queryBuilder;
     }
 
-    public function fetchData($query)
+    public function fetchData($query, array $opts = [])
     {
-        return $query->execute();
+        $stmt = $query->execute();
+        $data = $stmt->fetchAll();
+        return $data;
     }
 }

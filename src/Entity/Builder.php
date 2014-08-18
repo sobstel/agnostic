@@ -1,13 +1,28 @@
 <?php
 namespace Agnostic\Entity;
 
-use Aura\Marshal\Entity\Builder as BaseEntityBuilder; # TODO: remove, use implements BuilderInterface
+use Aura\Marshal\Entity\BuilderInterface;
 use Agnostic\Manager;
 
-class Builder extends BaseEntityBuilder
+class Builder implements BuilderInterface
 {
-    public function __construct($class)
+    protected $className = 'Agnostic\Entity\Entity';
+
+    public function __construct($className = null)
     {
-        $this->class = $class;
+        if ($className) {
+            $this->className = $className;
+        }
+    }
+
+    public function newInstance(array $data)
+    {
+        $entity = new {$this->className};
+
+        foreach ($data as $field => $value) {
+            $entity->offsetSet($field, $value);
+        }
+
+        return $entity;
     }
 }

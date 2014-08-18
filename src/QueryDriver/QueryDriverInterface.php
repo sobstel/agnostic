@@ -7,7 +7,7 @@ interface QueryDriverInterface
      * @param string
      * @return object
      */
-    public function baseQuery($typeName);
+    public function createQuery($typeName);
 
     /**
      * @param string
@@ -15,12 +15,12 @@ interface QueryDriverInterface
      * @param array
      * @return object
      */
-    public function finderQuery($typeName, $field, array $values);
+    public function createFinderQuery($typeName, $field, array $values);
 
     /**
      * Fetches data from query object
      *
      * @param object
      */
-    public function fetchData($query);
+    public function fetchData($query, array $opts = []);
 }
