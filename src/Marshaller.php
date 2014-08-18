@@ -52,8 +52,6 @@ class Marshaller extends BaseMarshaller
         );
 
         foreach ($metadata["relations"] as $relation) {
-            $nativeField = $relation['id'] ?: $this->__get($typeName)->getIdentityField();
-
             $baseInfo = [
                 'native_field' => $relation['id'],
                 'foreign_type' => $relation['targetTypeName'],

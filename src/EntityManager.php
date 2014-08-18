@@ -63,8 +63,8 @@ class EntityManager
         if (!isset($this->repositories[$entityName])) {
             // TODO: use metadata to determine repository
             $metadata = $this->getMetadada($entityName);
-            var_dump($metadata['relations']);
-            exit;
+
+            die('TO_DO');
 
             $typeName = $this->nameResolver->getTypeName($entityName);
             $className = $this->nameResolver->getRepositoryClassName($typeName);
