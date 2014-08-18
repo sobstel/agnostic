@@ -49,8 +49,10 @@ class EntityManager
         if (!isset($this->repositories[$entityName])) {
             $metadata = $this->getMetadada($entityName);
             $className = $metadata['repositoryClassName'];
-            $this->repositories[$entityName] = new $className($metadata['typeName'], $this->queryDriver);            
+
+            $this->repositories[$entityName] = new $className($metadata, $this->queryDriver);
         }
+
         return $this->repositories[$entityName];
     }
 }

@@ -18,6 +18,7 @@ class EntityManagerTest extends TestCase
 
         $repository = $em->getRepository("Match");
 
-        var_dump($repository->findBy('match_id', [157045, 157046]));
+        // var_dump($repository->findBy('match_id', [157045, 157046]));
+        var_dump($repository->find([157045, 157046]));
     }
 }

@@ -2,17 +2,21 @@
 namespace Agnostic\Entity;
 
 use Agnostic\EntityManager;
+use Agnostic\Entity\Metadata;
 use Agnostic\QueryDriver\QueryDriverInterface;
 
 class Repository
 {
     protected $typeName;
 
+    protected $metadata;
+
     protected $queryDriver;
 
-    public function __construct($typeName, QueryDriverInterface $queryDriver)
+    public function __construct(Metadata $metadata, QueryDriverInterface $queryDriver)
     {
-        $this->typeName = $typeName;
+        $this->typeName = $metadata['typeName'];
+        $this->metadata = $metadata;
         $this->queryDriver = $queryDriver;
     }
 
@@ -27,5 +31,10 @@ class Repository
         $data = $this->queryDriver->fetchData($query);
 
         return $data;
+    }
+
+    public function find(array $values)
+    {
+        return $this->findBy($this->metadata['id'], $values);
     }
 }
