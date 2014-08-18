@@ -5,37 +5,21 @@ use Aura\Marshal\Manager as BaseMarshaller;
 use Agnostic\Type\Builder as TypeBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Agnostic\Entity\NameResolver;
-use Agnostic\Entity\MetadataFactory;
+use Agnostic\Entity\Metadata;
 
 class Marshaller extends BaseMarshaller
 {
     protected $nameResolver;
 
-    protected $metadataFactory;
-
-    public function __construct(NameResolver $nameResolver, MetadataFactory $metadataFactory)
+    public function __construct(NameResolver $nameResolver)
     {    
         parent::__construct(new TypeBuilder, new RelationBuilder);
 
         $this->nameResolver = $nameResolver;
-        $this->metadataFactory = $metadataFactory;
     }
 
-    public function __get($name)
+    public function setTypeByEntity(Metadata $metadata)
     {
-        // load type from entity on the fly
-        if (!isset($this->types[$name])) {
-            $entityName = $this->getTypeEntityName($name);
-            $this->setTypeByEntity($entityName);
-        }
-
-        return parent::__get($name);
-    }
-
-    // set Aura type using Entity class
-    protected function setTypeByEntity($entityName)
-    {
-        $metadata = $this->metadataFactory()->get($entityName);
         $typeName = $metadata['typeName'];
 
         if (isset($this->types[$typeName])) {

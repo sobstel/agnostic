@@ -17,7 +17,8 @@ class Builder implements BuilderInterface
 
     public function newInstance(array $data)
     {
-        $entity = new {$this->className};
+        $className = $this->className;
+        $entity = new $className;
 
         foreach ($data as $field => $value) {
             $entity->offsetSet($field, $value);

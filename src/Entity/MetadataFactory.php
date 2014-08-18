@@ -3,6 +3,7 @@ namespace Agnostic\Entity;
 
 use Agnostic\Entity\Metadata;
 use Agnostic\Entity\NameResolver;
+use Agnostic\Marshaller;
 use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Common\Annotations\SimpleAnnotationReader;
 
@@ -18,17 +19,22 @@ class MetadataFactory
 {
     protected $nameResolver;
 
+    protected $marshaller;
+
     protected $metadatas = [];
 
-    public function __construct(NameResolver $nameResolver)
+    public function __construct(NameResolver $nameResolver, Marshaller $marshaller)
     {
         $this->nameResolver = $nameResolver;
+        $this->marshaller = $marshaller;
     }
 
     public function get($entityName)
     {
         if (!isset($this->metadatas[$entityName])) {
-            $this->create($entityName);
+            $metadata = $this->create($entityName);
+            $this->metadatas[$entityName] = $metadata;
+            $this->marshaller->setTypeByEntity($metadata);
         }
 
         return $this->metadatas[$entityName];

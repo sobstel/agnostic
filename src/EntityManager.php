@@ -22,22 +22,8 @@ class EntityManager
     {
         $this->queryDriver = $queryDriver;
         $this->nameResolver = $nameResolver ?: new NameResolver();
-
-        $this->metadataFactory = new MetadataFactory($this->nameResolver);
-        $this->marshaller = new Marshaller($this->nameResolver, $this->metadataFactory);
-    }
-
-    /**
-     * @param string
-     * @return Agnostic\Entity\Metadata
-     */
-    public function getMetadada($entityName)
-    {
-        if (!isset($this->metadatas[$entityName])) {
-            $this->metadatas[$entityName] = $this->metadataFactory->get($entityName);
-        }
-
-        return $this->metadatas[$entityName];
+        $this->marshaller = new Marshaller($this->nameResolver);
+        $this->metadataFactory = new MetadataFactory($this->nameResolver, $this->marshaller);
     }
 
     /**
@@ -47,10 +33,10 @@ class EntityManager
     public function getRepository($entityName)
     {
         if (!isset($this->repositories[$entityName])) {
-            $metadata = $this->getMetadada($entityName);
+            $metadata = $this->metadataFactory->get($entityName);
             $className = $metadata['repositoryClassName'];
 
-            $this->repositories[$entityName] = new $className($metadata, $this->queryDriver);
+            $this->repositories[$entityName] = new $className($metadata, $this->queryDriver, $this->marshaller);
         }
 
         return $this->repositories[$entityName];
