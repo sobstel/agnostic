@@ -6,7 +6,4 @@ use Agnostic\Entity\MetadataBuilder;
 
 class Entity extends GenericEntity
 {
-    static public function configure(MetadataBuilder $mb)
-    {
-    }
 }

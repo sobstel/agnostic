@@ -11,40 +11,40 @@ class NameResolver
 
     protected $repositoryNamespaces = [];
 
-    public function getTypeName($entityName)
-    {
-        if ($this->isTypeName($entityName)) { // normalize name
-            $entityName = $this->getEntityName($entityName);
-        }
+    // public function getTypeName($entityName)
+    // {
+    //     if ($this->isTypeName($entityName)) { // normalize name
+    //         $entityName = $this->getEntityName($entityName);
+    //     }
 
-        $typeName = array_search($entityName, $this->entityNames);
+    //     $typeName = array_search($entityName, $this->entityNames);
 
-        if ($typeName === false) {
-            $typeName = Inflector::pluralize(Inflector::tableize($entityName));
-            $this->entityNames[$typeName] = $entityName;
-        }
+    //     if ($typeName === false) {
+    //         $typeName = Inflector::pluralize(Inflector::tableize($entityName));
+    //         $this->entityNames[$typeName] = $entityName;
+    //     }
 
-        return $typeName;
-    }
+    //     return $typeName;
+    // }
 
-    public function getEntityName($typeName)
-    {
-        // if (!$this->isTypeName($typeName)) { // normalize name
-        //     $typeName = $this->getTypeName($typeName);
-        // }
+    // public function getEntityName($typeName)
+    // {
+    //     // if (!$this->isTypeName($typeName)) { // normalize name
+    //     //     $typeName = $this->getTypeName($typeName);
+    //     // }
 
-        if (!isset($this->entityNames[$typeName])) {
-            $entityName = Inflector::classify(Inflector::singularize($typeName));
-            $this->entityNames[$typeName] = $entityName;
-        }
+    //     if (!isset($this->entityNames[$typeName])) {
+    //         $entityName = Inflector::classify(Inflector::singularize($typeName));
+    //         $this->entityNames[$typeName] = $entityName;
+    //     }
 
-        return $this->entityNames[$typeName];
-    }
+    //     return $this->entityNames[$typeName];
+    // }
 
-    protected function isTypeName($name)
-    {
-        return ($name == strtolower($name));
-    }
+    // protected function isTypeName($name)
+    // {
+    //     return ($name == strtolower($name));
+    // }
 
     public function getEntityClassName($entityName)
     {

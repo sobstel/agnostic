@@ -14,5 +14,4 @@ use Agnostic\Entity\Entity;
  */
 class Match extends Entity
 {
-	// events->count
 }

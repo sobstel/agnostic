@@ -2,26 +2,23 @@
 namespace Agnostic;
 
 use Aura\Marshal\Manager as BaseMarshaller;
-use Agnostic\EntityManager;
 use Agnostic\Type\Builder as TypeBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
-use Doctrine\Common\Annotations\SimpleAnnotationReader as AnnotationReader;
-
-// annotations definitions need to be required explicitly, otherwise they're not visible for SimpleAnnotationReader
-require_once __DIR__.'/Entity/Annotations/Entity.php';
-require_once __DIR__.'/Entity/Annotations/BelongsTo.php';
-require_once __DIR__.'/Entity/Annotations/HasMany.php';
-require_once __DIR__.'/Entity/Annotations/HasManyThrough.php';
-require_once __DIR__.'/Entity/Annotations/HasOne.php';
+use Agnostic\Entity\NameResolver;
+use Agnostic\Entity\MetadataFactory;
 
 class Marshaller extends BaseMarshaller
 {
-    protected $em;
+    protected $nameResolver;
 
-    public function __construct(EntityManager $em)
-    {
-        $this->em = $em;
+    protected $metadataFactory;
+
+    public function __construct(NameResolver $nameResolver, MetadataFactory $metadataFactory)
+    {    
         parent::__construct(new TypeBuilder, new RelationBuilder);
+
+        $this->nameResolver = $nameResolver;
+        $this->metadataFactory = $metadataFactory;
     }
 
     public function __get($name)
@@ -38,77 +35,55 @@ class Marshaller extends BaseMarshaller
     // set Aura type using Entity class
     protected function setTypeByEntity($entityName)
     {
-        $typeName = $this->em->getEntityTypeName($entityName);
+        $metadata = $this->metadataFactory()->get($entityName);
+        $typeName = $metadata['typeName'];
 
         if (isset($this->types[$typeName])) {
             return ;
         }
 
-        $tableizedName = Inflector::tableize($entityName);
-
-        $className = $this->em->getEntityClassName($entityName);
-        $class = new \ReflectionClass($className);
-
-        $reader = new AnnotationReader();
-        $reader->addNamespace('Agnostic\Entity\Annotations');
-
-        $entityAnnotation = $reader->getClassAnnotation($class, 'Agnostic\Entity\Annotations\Entity');
-
         $this->setType(
             $typeName,
             [
-                'identity_field' => $entityAnnotation->id ?: $tableizedName.'_id',
-                'index_fields' => $entityAnnotation->indexes ?: [],
-                'entity_class_name' => $className,
+                'identity_field' => $metadata['id'],
+                'index_fields' => $metadata['indexes'],
+                'entity_class_name' => $metadata['entityClassName']
             ]
         );
 
-        // relations
-        foreach ($reader->getClassAnnotations($class) as $annotation) {
-            if (!in_array($annotation->getTag(), ['HasMany', 'BelongsTo', 'HasOne', 'HasManyThrough'])) {
-                continue;
-            }
-
-            $name = $annotation->name;
-            $targetTypeName = $this->em->getEntityTypeName($annotation->targetEntity);
-            $nativeField = $annotation->id ?: $this->__get($typeName)->getIdentityField();
+        foreach ($metadata["relations"] as $relation) {
+            $nativeField = $relation['id'] ?: $this->__get($typeName)->getIdentityField();
 
             $baseInfo = [
-                'native_field' => $nativeField,
-                'foreign_type' => $targetTypeName,
-                'foreign_field' => $annotation->targetId ?: $this->__get($targetTypeName)->getIdentityField(),
+                'native_field' => $relation['id'],
+                'foreign_type' => $relation['targetTypeName'],
+                'foreign_field' => $relation['targetId']
             ];
 
-            switch ($annotation->getTag()) {
+            switch ($relation['relationship']) {
                 case 'HasMany':
-                    $this->setRelation($typeName, $name, array_merge($baseInfo, ['relationship' => 'has_many']));
+                    $this->setRelation($typeName, $relation['name'], array_merge($baseInfo, ['relationship' => 'has_many']));
                 break;
 
                 case 'BelongsTo':
-                    $this->setRelation($typeName, $name, array_merge($baseInfo, ['relationship' => 'belongs_to']));
+                    $this->setRelation($typeName, $relation['name'], array_merge($baseInfo, ['relationship' => 'belongs_to']));
                 break;
 
                 case 'HasOne':
-                    $this->setRelation($typeName, $name, array_merge($baseInfo, ['relationship' => 'has_one']));
+                    $this->setRelation($typeName, $relation['name'], array_merge($baseInfo, ['relationship' => 'has_one']));
                 break;
 
                 case 'HasManyThrough':
-                    if ($annotation->throughEntity) {
-                        $throughType = $this->em->getEntityTypeName($annotation->throughEntity);
-                    } else {
-                        $throughType = $annotation->throughType;
-                    }
-
                     $this->setRelation(
                         $typeName,
-                        $name,
+                        $relation['name'],
                         array_merge(
                             $baseInfo,
                             [
                                 'relationship' => 'has_many_through',
-                                'through_type' => $throughType,
-                                'through_native_field' => $annotation->throughId ?: $nativeField,
-                                'through_foreign_field' => $annotation->throughTargetId ?: $this->$targetTypeName->getIdentityField(),
+                                'through_type' => $relation['throughType'],
+                                'through_native_field' => $relation['throughId'],
+                                'through_foreign_field' => $relation['throughTargetId'],
                             ]
                         )
                     );

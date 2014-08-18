@@ -1,16 +1,13 @@
 <?php
 namespace Agnostic\Entity;
 
-class Metadata
+use ArrayObject;
+
+// general metadata object (just data container)
+class Metadata extends ArrayObject
 {
-    protected $typeName;
-
-    protected $entityName;
-
-    protected $entityClassName;
-
-    public function __construct($entityName, $entityClassName)
+    public function __construct()
     {
-        //
-    }  
+        parent::__construct([], ArrayObject::ARRAY_AS_PROPS);
+    }
 }
