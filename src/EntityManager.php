@@ -18,27 +18,13 @@ class EntityManager
 
     protected $repositories;
 
-    protected $metadatas;
-
-    public function __construct(QueryDriverInterface $queryDriver)
+    public function __construct(QueryDriverInterface $queryDriver, NameResolver $nameResolver = null)
     {
         $this->queryDriver = $queryDriver;
-        $this->nameResolver = new NameResolver();
+        $this->nameResolver = $nameResolver ?: new NameResolver();
 
         $this->metadataFactory = new MetadataFactory($this->nameResolver);
         $this->marshaller = new Marshaller($this->nameResolver, $this->metadataFactory);
-    }
-
-    // SMELL: should be injected into other objects, and not accessed trhough $em
-    public function getQueryDriver()
-    {
-        return $this->queryDriver;
-    }
-
-    // SMELL: should be injected into other objects, and not accessed trhough $em
-    public function getNameResolver()
-    {
-        return $this->nameResolver;
     }
 
     /**
@@ -61,15 +47,10 @@ class EntityManager
     public function getRepository($entityName)
     {
         if (!isset($this->repositories[$entityName])) {
-            // TODO: use metadata to determine repository
             $metadata = $this->getMetadada($entityName);
-
-            die('TO_DO');
-
-            $typeName = $this->nameResolver->getTypeName($entityName);
-            $className = $this->nameResolver->getRepositoryClassName($typeName);
-            $this->repositories[$typeName] = new $className($typeName, $this);            
+            $className = $metadata['repositoryClassName'];
+            $this->repositories[$entityName] = new $className($metadata['typeName'], $this->queryDriver);            
         }
-        return $this->repositories[$typeName];
+        return $this->repositories[$entityName];
     }
 }

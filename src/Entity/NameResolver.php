@@ -1,8 +1,6 @@
 <?php
 namespace Agnostic\Entity;
 
-use Doctrine\Common\Inflector\Inflector;
-
 class NameResolver
 {
     protected $entityNames = [];
@@ -10,41 +8,6 @@ class NameResolver
     protected $entityNamespaces = [];
 
     protected $repositoryNamespaces = [];
-
-    // public function getTypeName($entityName)
-    // {
-    //     if ($this->isTypeName($entityName)) { // normalize name
-    //         $entityName = $this->getEntityName($entityName);
-    //     }
-
-    //     $typeName = array_search($entityName, $this->entityNames);
-
-    //     if ($typeName === false) {
-    //         $typeName = Inflector::pluralize(Inflector::tableize($entityName));
-    //         $this->entityNames[$typeName] = $entityName;
-    //     }
-
-    //     return $typeName;
-    // }
-
-    // public function getEntityName($typeName)
-    // {
-    //     // if (!$this->isTypeName($typeName)) { // normalize name
-    //     //     $typeName = $this->getTypeName($typeName);
-    //     // }
-
-    //     if (!isset($this->entityNames[$typeName])) {
-    //         $entityName = Inflector::classify(Inflector::singularize($typeName));
-    //         $this->entityNames[$typeName] = $entityName;
-    //     }
-
-    //     return $this->entityNames[$typeName];
-    // }
-
-    // protected function isTypeName($name)
-    // {
-    //     return ($name == strtolower($name));
-    // }
 
     public function getEntityClassName($entityName)
     {

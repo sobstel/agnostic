@@ -2,30 +2,29 @@
 namespace Agnostic\Entity;
 
 use Agnostic\EntityManager;
+use Agnostic\QueryDriver\QueryDriverInterface;
 
 class Repository
 {
     protected $typeName;
 
-    protected $em;
+    protected $queryDriver;
 
-    public function __construct($typeName, EntityManager $em)
+    public function __construct($typeName, QueryDriverInterface $queryDriver)
     {
         $this->typeName = $typeName;
-        $this->em = $em;
+        $this->queryDriver = $queryDriver;
     }
 
     public function createQuery()
     {
-        return $this->em->getQueryDriver()->createQuery($this->typeName);
+        return $this->queryDriver->createQuery($this->typeName);
     }
 
     public function findBy($field, array $values)
     {
-        $queryDriver = $this->em->getQueryDriver();
-
-        $query = $queryDriver->createFinderQuery($this->typeName, $field, $values);
-        $data = $queryDriver->fetchData($query);
+        $query = $this->queryDriver->createFinderQuery($this->typeName, $field, $values);
+        $data = $this->queryDriver->fetchData($query);
 
         return $data;
     }

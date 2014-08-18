@@ -10,9 +10,11 @@ class EntityManagerTest extends TestCase
         $conn = \Doctrine\DBAL\DriverManager::getConnection(['pdo' => self::$dbh]);
         $queryDriver = new \Agnostic\QueryDriver\DoctrineQueryDriver($conn);
 
-        $em = new EntityManager($queryDriver);
-        $em->getNameResolver()->registerEntityNamespace('Agnostic\Tests\Entities', __DIR__.'/Tests/Entities');
-        $em->getNameResolver()->registerRepositoryNamespace('Agnostic\Tests\Repositories', __DIR__.'/Tests/Repositories');
+        $nameResolver = new \Agnostic\Entity\NameResolver();
+        $nameResolver->registerEntityNamespace('Agnostic\Tests\Entities', __DIR__.'/Tests/Entities');
+        $nameResolver->registerRepositoryNamespace('Agnostic\Tests\Repositories', __DIR__.'/Tests/Repositories');
+
+        $em = new EntityManager($queryDriver, $nameResolver);
 
         $repository = $em->getRepository("Match");
 
