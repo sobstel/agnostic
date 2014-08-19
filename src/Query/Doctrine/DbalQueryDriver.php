@@ -1,10 +1,10 @@
 <?php
-namespace Agnostic\QueryDriver;
+namespace Agnostic\Query\Doctrine;
 
-use Agnostic\QueryDriver\QueryDriverInterface;
+use Agnostic\Query\QueryDriverInterface;
 use Doctrine\DBAL\Connection;
 
-class DoctrineQueryDriver implements QueryDriverInterface
+class DbalQueryDriver implements QueryDriverInterface
 {
     protected $conn;
 
@@ -14,7 +14,7 @@ class DoctrineQueryDriver implements QueryDriverInterface
     }
 
     /**
-     * @return Doctrine\ORM\QueryBuilder
+     * @return Doctrine\DBAL\Query\QueryBuilder
      */
     public function createQuery($typeName)
     {

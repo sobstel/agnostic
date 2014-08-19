@@ -8,7 +8,7 @@ class EntityManagerTest extends TestCase
     public function testTemporary()
     {
         $conn = \Doctrine\DBAL\DriverManager::getConnection(['pdo' => self::$dbh]);
-        $queryDriver = new \Agnostic\QueryDriver\DoctrineQueryDriver($conn);
+        $queryDriver = new \Agnostic\Query\Doctrine\DbalQueryDriver($conn);
 
         $nameResolver = new \Agnostic\Entity\NameResolver();
         $nameResolver->registerEntityNamespace('Agnostic\Tests\Entities', __DIR__.'/Tests/Entities');

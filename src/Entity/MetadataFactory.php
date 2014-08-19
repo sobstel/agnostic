@@ -1,10 +1,11 @@
 <?php
 namespace Agnostic\Entity;
 
+use Doctrine\Common\Inflector\Inflector;
+use Agnostic\Marshaller;
 use Agnostic\Entity\Metadata;
 use Agnostic\Entity\NameResolver;
-use Agnostic\Marshaller;
-use Doctrine\Common\Inflector\Inflector;
+use Agnostic\Entity\RelationMetadata;
 use Doctrine\Common\Annotations\SimpleAnnotationReader;
 
 // annotations definitions need to be required explicitly...
@@ -70,7 +71,7 @@ class MetadataFactory
                 continue;
             }
 
-            $relation = new Metadata();
+            $relation = new RelationMetadata;
 
             $name = $annotation->name;
 

@@ -3,7 +3,7 @@ namespace Agnostic\Entity;
 
 use ArrayObject;
 
-class Metadata extends ArrayObject
+class RelationMetadata extends ArrayObject
 {
     public function __construct()
     {

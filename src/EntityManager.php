@@ -2,10 +2,11 @@
 namespace Agnostic;
 
 use Agnostic\Marshaller;
-use Agnostic\QueryDriver\QueryDriverInterface;
-use Agnostic\Entity\NameResolver;
 use Agnostic\Entity\Metadata;
 use Agnostic\Entity\MetadataFactory;
+use Agnostic\Entity\NameResolver;
+use Agnostic\Query\QueryDriverInterface;
+use Agnostic\Query\QueryDriverDecorator;
 
 // GOD class
 class EntityManager
@@ -20,7 +21,7 @@ class EntityManager
 
     public function __construct(QueryDriverInterface $queryDriver, NameResolver $nameResolver = null)
     {
-        $this->queryDriver = $queryDriver;
+        $this->queryDriver = new QueryDriverDecorator($queryDriver);
         $this->nameResolver = $nameResolver ?: new NameResolver();
         $this->marshaller = new Marshaller($this->nameResolver);
         $this->metadataFactory = new MetadataFactory($this->nameResolver, $this->marshaller);

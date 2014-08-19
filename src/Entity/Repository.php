@@ -4,7 +4,7 @@ namespace Agnostic\Entity;
 use Agnostic\EntityManager;
 use Agnostic\Entity\Metadata;
 use Agnostic\Marshaller;
-use Agnostic\QueryDriver\QueryDriverInterface;
+use Agnostic\Query\QueryDriverInterface;
 
 class Repository
 {
@@ -29,11 +29,12 @@ class Repository
 
     public function findBy($field, array $values)
     {
-        $query = $this->queryDriver->createFinderQuery($this->typeName, $field, $values);
-        $data = $this->queryDriver->fetchData($query);
-
         $typeName = $this->typeName;
 
+        $query = $this->queryDriver->createFinderQuery($this->typeName, $field, $values);
+
+        // TODO: this should be moved to QueryDriver (and implicitly to Collection)
+        $data = $query->fetch();
         $ids = $this->marshaller->$typeName->load($data);
         $collection = $this->marshaller->$typeName->getCollection($ids);
 
