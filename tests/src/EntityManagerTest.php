@@ -16,9 +16,11 @@ class EntityManagerTest extends TestCase
 
         $em = new EntityManager($queryDriver, $nameResolver);
 
-        $repository = $em->getRepository("Match");
+        $r = $em->get("Match")
+            ->find([157045, 157046])
+            // ->with('round')
+            ->fetch();
 
-        // var_dump($repository->findBy('match_id', [157045, 157046]));
-        var_dump($repository->find([157045, 157046]));
-    }
+        var_dump($r);exit;
+     }
 }

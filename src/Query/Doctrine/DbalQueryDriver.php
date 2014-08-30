@@ -16,7 +16,7 @@ class DbalQueryDriver implements QueryDriverInterface
     /**
      * @return Doctrine\DBAL\Query\QueryBuilder
      */
-    public function createQuery($typeName)
+    public function createBaseQuery($typeName)
     {
         $queryBuilder = $this->conn->createQueryBuilder();
         $queryBuilder
@@ -29,7 +29,7 @@ class DbalQueryDriver implements QueryDriverInterface
 
     public function createFinderQuery($typeName, $field, array $values)
     {
-        $queryBuilder = $this->createQuery($typeName);
+        $queryBuilder = $this->createBaseQuery($typeName);
         $queryBuilder
             ->where($queryBuilder->expr()->in($field, $values))
             ;

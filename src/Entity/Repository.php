@@ -8,37 +8,24 @@ use Agnostic\Query\QueryDriverInterface;
 
 class Repository
 {
-    protected $typeName;
-
     protected $metadata;
 
     protected $queryDriver;
 
-    public function __construct(Metadata $metadata, QueryDriverInterface $queryDriver, Marshaller $marshaller)
+    public function __construct(Metadata $metadata, QueryDriverInterface $queryDriver)
     {
-        $this->typeName = $metadata['typeName'];
         $this->metadata = $metadata;
         $this->queryDriver = $queryDriver;
-        $this->marshaller = $marshaller;
     }
 
-    public function createQuery()
+    public function createBaseQuery()
     {
-        return $this->queryDriver->createQuery($this->typeName);
+        return $this->queryDriver->createBaseQuery($this->metadata['typeName']);
     }
 
     public function findBy($field, array $values)
     {
-        $typeName = $this->typeName;
-
-        $query = $this->queryDriver->createFinderQuery($this->typeName, $field, $values);
-
-        // TODO: this should be moved to QueryDriver (and implicitly to Collection)
-        $data = $query->fetch();
-        $ids = $this->marshaller->$typeName->load($data);
-        $collection = $this->marshaller->$typeName->getCollection($ids);
-
-        return $collection;
+        return $this->queryDriver->createFinderQuery($this->metadata['typeName'], $field, $values);
     }
 
     public function find(array $values)

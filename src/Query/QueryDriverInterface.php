@@ -7,7 +7,7 @@ interface QueryDriverInterface
      * @param string
      * @return object Query object
      */
-    public function createQuery($typeName);
+    public function createBaseQuery($typeName);
 
     /**
      * @param string

@@ -7,24 +7,31 @@ use Agnostic\Entity\MetadataFactory;
 use Agnostic\Entity\NameResolver;
 use Agnostic\Query\QueryDriverInterface;
 use Agnostic\Query\QueryDriverDecorator;
+use Agnostic\Entity\RepositoryFactory;
 
 // GOD class
 class EntityManager
 {
-    protected $marshaller;
-
-    protected $queryDriver;
-
-    protected $nameResolver;
-
-    protected $repositories;
+    protected $repositoryFactory;
 
     public function __construct(QueryDriverInterface $queryDriver, NameResolver $nameResolver = null)
     {
-        $this->queryDriver = new QueryDriverDecorator($queryDriver);
-        $this->nameResolver = $nameResolver ?: new NameResolver();
-        $this->marshaller = new Marshaller($this->nameResolver);
-        $this->metadataFactory = new MetadataFactory($this->nameResolver, $this->marshaller);
+        if (!$nameResolver) {
+            $nameResolver = new NameResolver();
+        }
+
+        $marshaller = new Marshaller($nameResolver);
+        $queryDriver = new QueryDriverDecorator($queryDriver, $marshaller);
+        $metadataFactory = new MetadataFactory($nameResolver, $marshaller);
+        $repositoryFactory = new RepositoryFactory($metadataFactory, $queryDriver);
+
+        $this->repositoryFactory = $repositoryFactory;
+    }
+
+    // convenience alias for getRepository
+    public function get($entityName)
+    {
+        return $this->getRepository($entityName);
     }
 
     /**
@@ -33,13 +40,6 @@ class EntityManager
      */
     public function getRepository($entityName)
     {
-        if (!isset($this->repositories[$entityName])) {
-            $metadata = $this->metadataFactory->get($entityName);
-            $className = $metadata['repositoryClassName'];
-
-            $this->repositories[$entityName] = new $className($metadata, $this->queryDriver, $this->marshaller);
-        }
-
-        return $this->repositories[$entityName];
+        return $this->repositoryFactory->get($entityName);
     }
 }
