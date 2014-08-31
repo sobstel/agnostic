@@ -73,21 +73,47 @@ class MetadataFactory
 
             $relation = new RelationMetadata;
 
-            $name = $annotation->name;
-
             $relation['relationship'] = $annotation->getTag();
-
             $relation['name'] = $annotation->name;
             $relation['targetEntity'] = $annotation->targetEntity;
             $relation['targetType'] = $this->get($annotation->targetEntity)['typeName'];
-            $relation['id'] = $annotation->id ?: $this->get($relation['targetEntity'])['id'];
-            $relation['targetId'] = $this->get($relation['targetEntity'])['id'];
+
+            if ($relation['relationship'] == 'BelongsTo') {
+                $relation['id'] = $annotation->id ?: $this->get($relation['targetEntity'])['id']; 
+
+                if ($annotation->targetId) {
+                    $relation['targetId'] = $annotation->targetId;
+                } else {
+                    $relation['targetId'] = $this->get($relation['targetEntity'])['id'];
+
+                    if ($relation['targetId'] == 'id') {
+                        $relation['targetId'] = sprintf('%s_id', Inflector::singularize($this->get($relation['targetEntity'])['typeName']));
+                    }
+                }
+            }
+
+            if ($relation['relationship'] == 'HasOne' || $relation['relationship'] == 'HasMany') {
+                $relation['id'] = $annotation->id ?: $metadata['id'];
+
+                if ($annotation->targetId) {
+                    $relation['targetId'] = $annotation->targetId;
+                } else {
+                    $relation['targetId'] = $metadata['id'];
+
+                    if ($relation['targetId'] == 'id') {
+                        $relation['targetId'] = sprintf('%s_id', $metadata['typeName']);
+                    }
+                }
+            }
 
             if ($relation['relationship'] == 'HasManyThrough') {
-                $relation['throughEntity'] = $annotation->throughEntity;
-                $relation['throughType'] =  $this->get($annotation->throughEntity)['typeName'];
-                $relation['throughId'] = $annotation->throughId ?: $relation['id'];
-                $relation['throughTargetId'] = $annotation->throughTargetId ?: $this->get($relation['throughEntity'])['id'];
+                // @todo
+                // $relation['id'] = $annotation->id ?: $metadata['id'];
+                // $relation['targetId'] = $this->get($relation['targetEntity'])['id']; 
+                // $relation['throughEntity'] = $annotation->throughEntity;
+                // $relation['throughType'] =  $this->get($annotation->throughEntity)['typeName'];
+                // $relation['throughId'] = $annotation->throughId ?: $relation['id'];
+                // $relation['throughTargetId'] = $annotation->throughTargetId ?: $this->get($relation['throughEntity'])['id'];
             }
 
             $metadata['relations'][$relation['name']] = $relation;

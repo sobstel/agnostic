@@ -6,4 +6,17 @@ use Agnostic\Entity\MetadataBuilder;
 
 class Entity extends GenericEntity
 {
+    public function toArray()
+    {
+        $data = $this->data;
+
+        $data = array_filter($data, function($val){
+            if ($val instanceof \Aura\Marshal\Lazy\GenericLazy) {
+                return false;
+            }
+            return true;
+        });
+
+        return $data;
+    }
 }

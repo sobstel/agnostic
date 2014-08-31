@@ -87,19 +87,14 @@ class QueryProxy implements IteratorAggregate
         $relationMetadata = $this->metadata['relations'][$name];
 
         $ids = $collection->getFieldValues($relationMetadata['id']);
+
+        $targetRepository = $this->repositoryFactory->get($relationMetadata['targetEntity']);
         
         switch ($relationMetadata['relationship']) {
             case 'BelongsTo':
-                $relatedRepository = $this->repositoryFactory->get($relationMetadata['targetEntity']);
-                $relatedRepository->findBy($relationMetadata['targetId'], $ids)->fetch();
-            break;
-
             case 'HasOne':
-                // @todo
-            break;
-
             case 'HasMany':
-                // @todo
+                $targetRepository->findBy($relationMetadata['targetId'], $ids)->fetch();
             break;
 
             case 'HasManyThrough':

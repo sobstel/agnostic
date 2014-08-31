@@ -20,10 +20,21 @@ class TemporaryTest extends TestCase
             ->find([157045, 157046, 156746, 156679, 156513, 156531])
             ->orderBy('date_time', 'DESC')
             // ->refine('') // scope
-            ->with('round') // relation
+            ->with('round')
             ->with('teamA')
             ->with('teamB')
+            ->with('events')
             ->fetch();
+
+        // $r = $rf->get("Match")
+        //     ->find([157045, 157046, 156746, 156679, 156513, 156531])
+        //     ->orderBy('date_time', 'DESC')
+        //     // ->refine('') // scope
+        //     ->with('round', function($query) { $query->with('season'); })) // shortcut: -> with['round' => ['season' => 'competition']]
+        //     ->with(['teamA', 'teamB']) // array support
+        //     ->fetch();
+
+        var_dump(count($r[0]->events), $r[0]->events[0]->toArray());
 
         foreach ($r as $k => $v) {
             echo sprintf('%d: %s: (%s) %s v %s  %d - %d'.PHP_EOL, 
