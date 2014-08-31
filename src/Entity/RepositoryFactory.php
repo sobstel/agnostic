@@ -1,21 +1,30 @@
 <?php
 namespace Agnostic\Entity;
 
-use Agnostic\Entity\MetadataFactory;
 use Agnostic\Query\QueryDriverInterface;
+use Agnostic\Entity\NameResolver;
+use Agnostic\Query\QueryDriverProxy;
+use Agnostic\Marshaller;
+use Agnostic\Entity\MetadataFactory;
 
 class RepositoryFactory
 {
     protected $metadataFactory;
 
-    protected $queryDriver;
+    protected $queryDriverProxy;
 
     protected $repositories = [];
 
-    public function __construct(MetadataFactory $metadataFactory, QueryDriverInterface $queryDriver)
+    public function __construct(QueryDriverInterface $queryDriver, NameResolver $nameResolver = null)
     {
-        $this->metadataFactory = $metadataFactory;
-        $this->queryDriver = $queryDriver;
+        if (!$nameResolver) {
+            $nameResolver = new NameResolver();
+        }
+
+        $marshaller = new Marshaller($nameResolver);
+
+        $this->metadataFactory = new MetadataFactory($nameResolver, $marshaller);
+        $this->queryDriverProxy = new QueryDriverProxy($queryDriver, $marshaller, $this);
     }
 
     public function get($entityName)
@@ -24,7 +33,7 @@ class RepositoryFactory
             $metadata = $this->metadataFactory->get($entityName);
             $className = $metadata['repositoryClassName'];
 
-            $this->repositories[$entityName] = new $className($metadata, $this->queryDriver);
+            $this->repositories[$entityName] = new $className($metadata, $this->queryDriverProxy);
         }
 
         return $this->repositories[$entityName];

@@ -38,7 +38,7 @@ class Marshaller extends BaseMarshaller
         foreach ($metadata["relations"] as $relation) {
             $baseInfo = [
                 'native_field' => $relation['id'],
-                'foreign_type' => $relation['targetTypeName'],
+                'foreign_type' => $relation['targetType'],
                 'foreign_field' => $relation['targetId']
             ];
 

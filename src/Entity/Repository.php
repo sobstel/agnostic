@@ -4,28 +4,33 @@ namespace Agnostic\Entity;
 use Agnostic\EntityManager;
 use Agnostic\Entity\Metadata;
 use Agnostic\Marshaller;
-use Agnostic\Query\QueryDriverInterface;
+use Agnostic\Query\QueryDriverProxy;
 
 class Repository
 {
     protected $metadata;
 
-    protected $queryDriver;
+    protected $queryDriverDecorator;
 
-    public function __construct(Metadata $metadata, QueryDriverInterface $queryDriver)
+    public function __construct(Metadata $metadata, QueryDriverProxy $queryDriverProxy)
     {
         $this->metadata = $metadata;
-        $this->queryDriver = $queryDriver;
+        $this->queryDriverProxy = $queryDriverProxy;
+    }
+
+    public function getMetadata()
+    {
+        return $this->metadata;
     }
 
     public function createBaseQuery()
     {
-        return $this->queryDriver->createBaseQuery($this->metadata['typeName']);
+        return $this->queryDriverProxy->createBaseQuery($this->metadata);
     }
 
     public function findBy($field, array $values)
     {
-        return $this->queryDriver->createFinderQuery($this->metadata['typeName'], $field, $values);
+        return $this->queryDriverProxy->createFinderQuery($this->metadata, $field, $values);
     }
 
     public function find(array $values)

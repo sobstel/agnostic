@@ -79,24 +79,18 @@ class MetadataFactory
 
             $relation['name'] = $annotation->name;
             $relation['targetEntity'] = $annotation->targetEntity;
+            $relation['targetType'] = $this->get($annotation->targetEntity)['typeName'];
             $relation['id'] = $annotation->id ?: $this->get($relation['targetEntity'])['id'];
-            $relation['targetTypeName'] = $this->get($annotation->targetEntity)['typeName'];
-            $relation['targetId'] = $annotation->targetId ?: $this->get($relation['targetEntity'])['id'];
+            $relation['targetId'] = $this->get($relation['targetEntity'])['id'];
 
             if ($relation['relationship'] == 'HasManyThrough') {
-                if ($annotation->throughEntity) {
-                    $throughType = $this->get($annotation->throughEntity)['typeName'];
-                } else {
-                    $throughType = $annotation->throughType;
-                }
-
                 $relation['throughEntity'] = $annotation->throughEntity;
-                $relation['throughType'] = $throughType;
+                $relation['throughType'] =  $this->get($annotation->throughEntity)['typeName'];
                 $relation['throughId'] = $annotation->throughId ?: $relation['id'];
                 $relation['throughTargetId'] = $annotation->throughTargetId ?: $this->get($relation['throughEntity'])['id'];
             }
 
-            $metadata['relations'][] = $relation;
+            $metadata['relations'][$relation['name']] = $relation;
         }
 
         return $metadata;

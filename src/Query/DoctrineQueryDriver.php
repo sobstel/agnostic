@@ -1,10 +1,10 @@
 <?php
-namespace Agnostic\Query\Doctrine;
+namespace Agnostic\Query;
 
 use Agnostic\Query\QueryDriverInterface;
 use Doctrine\DBAL\Connection;
 
-class DbalQueryDriver implements QueryDriverInterface
+class DoctrineQueryDriver implements QueryDriverInterface
 {
     protected $conn;
 
@@ -18,10 +18,12 @@ class DbalQueryDriver implements QueryDriverInterface
      */
     public function createBaseQuery($typeName)
     {
+        $rootAlias = substr($typeName, 0, 1);
+
         $queryBuilder = $this->conn->createQueryBuilder();
         $queryBuilder
-            ->select('*')
-            ->from($typeName, substr($typeName, 0, 1))
+            ->select(sprintf('%s.*', $rootAlias))
+            ->from($typeName, $rootAlias)
             ;
         
         return $queryBuilder;

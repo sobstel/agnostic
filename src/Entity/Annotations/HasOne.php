@@ -10,7 +10,6 @@ use Doctrine\Common\Annotations\Annotation;
  *   @Attribute("name", required=true, type="string"),
  *   @Attribute("targetEntity", required=true, type="string"),
  *   @Attribute("id", required=false, type="string"),
- *   @Attribute("targetId", required=false, type="string"),
  * })
  */
 class HasOne extends Annotation
