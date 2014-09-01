@@ -11,8 +11,8 @@ class TemporaryTest extends TestCase
         $queryDriver = new \Agnostic\QueryDriver\DoctrineQueryDriver($conn);
 
         $nameResolver = new \Agnostic\NameResolver();
-        $nameResolver->registerEntityNamespace('Agnostic\Tests\Entity', __DIR__.'/Tests/Entity');
-        $nameResolver->registerQueryNamespace('Agnostic\Tests\Query', __DIR__.'/Tests/Query');
+        $nameResolver->registerEntityPrefix('Agnostic\Tests\Entity', __DIR__.'/Tests/Entity');
+        $nameResolver->registerQueryPrefix('Agnostic\Tests\Query', __DIR__.'/Tests/Query');
 
         $qf = new QueryFactory($queryDriver, $nameResolver);
 

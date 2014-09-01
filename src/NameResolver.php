@@ -5,24 +5,24 @@ class NameResolver
 {
     protected $entityNames = [];
 
-    protected $entityNamespaces = [];
+    protected $entityPrefixes = [];
 
-    protected $queryNamespaces = [];
+    protected $queryPrefixes = [];
 
     public function getEntityClassName($entityName)
     {
-        return $this->getClassName($entityName, $this->entityNamespaces, 'Agnostic\Entity\Entity');
+        return $this->getClassName($entityName, $this->entityPrefixes, 'Agnostic\Entity\Entity');
     }
 
     public function getQueryClassName($entityName)
     {
-        return $this->getClassName($entityName, $this->queryNamespaces, 'Agnostic\Query\Query');
+        return $this->getClassName($entityName, $this->queryPrefixes, 'Agnostic\Query\Query');
     }
 
-    protected function getClassName($name, array $namespaces, $defaultClassname)
+    protected function getClassName($name, array $prefixes, $defaultClassname)
     {
-        foreach ($namespaces as $namespace) {
-            $className = $namespace.$name;
+        foreach ($prefixes as $prefix) {
+            $className = $prefix.$name;
 
             if (class_exists($className, true)) {
                 return $className;
@@ -32,15 +32,15 @@ class NameResolver
         return $defaultClassname;
     }
 
-    public function registerEntityNamespace($namespace)
+    public function registerEntityPrefix($prefix)
     {
-        $namespace = rtrim($namespace, '\\').'\\'; // ensure backslash at the end
-        $this->entityNamespaces[] = $namespace;
+        $prefix = rtrim($prefix, '\\').'\\'; // ensure backslash at the end
+        $this->entityPrefixes[] = $prefix;
     }
 
-    public function registerQueryNamespace($namespace)
+    public function registerQueryPrefix($prefix)
     {
-        $namespace = rtrim($namespace, '\\').'\\'; // ensure backslash at the end
-        $this->queryNamespaces[] = $namespace;
+        $prefix = rtrim($prefix, '\\').'\\'; // ensure backslash at the end
+        $this->queryPrefixes[] = $prefix;
     }
 }
