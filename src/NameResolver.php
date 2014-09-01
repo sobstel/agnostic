@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Entity;
+namespace Agnostic;
 
 class NameResolver
 {
@@ -7,16 +7,16 @@ class NameResolver
 
     protected $entityNamespaces = [];
 
-    protected $repositoryNamespaces = [];
+    protected $queryNamespaces = [];
 
     public function getEntityClassName($entityName)
     {
         return $this->getClassName($entityName, $this->entityNamespaces, 'Agnostic\Entity\Entity');
     }
 
-    public function getRepositoryClassName($entityName)
+    public function getQueryClassName($entityName)
     {
-        return $this->getClassName($entityName, $this->repositoryNamespaces, 'Agnostic\Entity\Repository');
+        return $this->getClassName($entityName, $this->queryNamespaces, 'Agnostic\Query\Query');
     }
 
     protected function getClassName($name, array $namespaces, $defaultClassname)
@@ -38,9 +38,9 @@ class NameResolver
         $this->entityNamespaces[] = $namespace;
     }
 
-    public function registerRepositoryNamespace($namespace)
+    public function registerQueryNamespace($namespace)
     {
         $namespace = rtrim($namespace, '\\').'\\'; // ensure backslash at the end
-        $this->repositoryNamespaces[] = $namespace;
+        $this->queryNamespaces[] = $namespace;
     }
 }

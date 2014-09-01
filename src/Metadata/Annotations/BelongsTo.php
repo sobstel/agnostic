@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Entity\Annotations;
+namespace Agnostic\Metadata\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -11,14 +11,9 @@ use Doctrine\Common\Annotations\Annotation;
  *   @Attribute("targetEntity", required=true, type="string"),
  *   @Attribute("id", required=false, type="string"),
  *   @Attribute("targetId", required=false, type="string"),
- *   @Attribute("throughEntity", required=true, type="string"),
- *   @Attribute("throughId", required=false, type="string"),
- *   @Attribute("throughTargetId", required=false, type="string"),
  * })
- *
- * Either throughEntity or throughType must be provided.
  */
-class HasManyThrough extends Annotation
+class BelongsTo extends Annotation
 {
     use AnnotationMetaTrait;
 
@@ -29,10 +24,4 @@ class HasManyThrough extends Annotation
     public $id;
 
     public $targetId;
-
-    public $throughEntity;
-
-    public $throughId;
-
-    public $throughTargetId;
 }

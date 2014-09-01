@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Query;
+namespace Agnostic\QueryDriver;
 
 interface QueryDriverInterface
 { 
@@ -7,20 +7,20 @@ interface QueryDriverInterface
      * @param string
      * @return object Query object
      */
-    public function createBaseQuery($typeName);
+    public function createNativeQuery($typeName = null);
 
     /**
-     * @param string
+     * @param object
      * @param string
      * @param array
      * @return object Query object
      */
-    public function createFinderQuery($typeName, $field, array $values);
+    public function addWhereIn($nativeQuery, $field, array $values);
 
     /**
      * Fetches data from query object
      *
      * @param object Query object
      */
-    public function fetchData($query, array $opts = []);
+    public function fetchData($nativeQuery, array $opts = []);
 }

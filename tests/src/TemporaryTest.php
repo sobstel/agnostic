@@ -1,22 +1,22 @@
 <?php
 namespace Agnostic\Tests;
 
-use Agnostic\Entity\RepositoryFactory;
+use Agnostic\Query\Factory as QueryFactory;
 
 class TemporaryTest extends TestCase
 {
     public function testTemporary()
     {
         $conn = \Doctrine\DBAL\DriverManager::getConnection(['pdo' => self::$dbh]);
-        $queryDriver = new \Agnostic\Query\DoctrineQueryDriver($conn);
+        $queryDriver = new \Agnostic\QueryDriver\DoctrineQueryDriver($conn);
 
-        $nameResolver = new \Agnostic\Entity\NameResolver();
-        $nameResolver->registerEntityNamespace('Agnostic\Tests\Entities', __DIR__.'/Tests/Entities');
-        $nameResolver->registerRepositoryNamespace('Agnostic\Tests\Repositories', __DIR__.'/Tests/Repositories');
+        $nameResolver = new \Agnostic\NameResolver();
+        $nameResolver->registerEntityNamespace('Agnostic\Tests\Entity', __DIR__.'/Tests/Entity');
+        $nameResolver->registerQueryNamespace('Agnostic\Tests\Query', __DIR__.'/Tests/Query');
 
-        $rf = new RepositoryFactory($queryDriver, $nameResolver);
+        $qf = new QueryFactory($queryDriver, $nameResolver);
 
-        $r = $rf->get("Match")
+        $r = $qf->create("Match")
             ->find([157045, 157046, 156746, 156679, 156513, 156531])
             ->orderBy('date_time', 'DESC')
             // ->refine('') // scope

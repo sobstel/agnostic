@@ -1,9 +1,9 @@
 <?php
-namespace Agnostic\Entity;
+namespace Agnostic\Metadata;
 
 use ArrayObject;
 
-class Metadata extends ArrayObject
+class EntityMetadata extends ArrayObject
 {
     public function __construct()
     {

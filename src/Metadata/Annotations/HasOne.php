@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Entity\Annotations;
+namespace Agnostic\Metadata\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
 
@@ -13,7 +13,7 @@ use Doctrine\Common\Annotations\Annotation;
  *   @Attribute("targetId", required=false, type="string"),
  * })
  */
-class HasMany extends Annotation
+class HasOne extends Annotation
 {
     use AnnotationMetaTrait;
 

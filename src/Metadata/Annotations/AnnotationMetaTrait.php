@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Entity\Annotations;
+namespace Agnostic\Metadata\Annotations;
 
 use Doctrine\Common\Inflector\Inflector;
 

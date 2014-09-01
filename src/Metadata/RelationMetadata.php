@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Entity;
+namespace Agnostic\Metadata;
 
 use ArrayObject;
 

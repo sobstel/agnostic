@@ -1,5 +1,5 @@
 4<?php
-namespace Agnostic\Query;
+namespace Agnostic\QueryDriver;
 
 class PDOQuery
 {

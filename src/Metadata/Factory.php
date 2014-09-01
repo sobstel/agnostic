@@ -1,11 +1,12 @@
 <?php
-namespace Agnostic\Entity;
+namespace Agnostic\Metadata;
+
+use Agnostic\Marshaller;
+use Agnostic\NameResolver;
+use Agnostic\Metadata\EntityMetadata;
+use Agnostic\Metadata\RelationMetadata;
 
 use Doctrine\Common\Inflector\Inflector;
-use Agnostic\Marshaller;
-use Agnostic\Entity\Metadata;
-use Agnostic\Entity\NameResolver;
-use Agnostic\Entity\RelationMetadata;
 use Doctrine\Common\Annotations\SimpleAnnotationReader;
 
 // annotations definitions need to be required explicitly...
@@ -16,7 +17,7 @@ require_once __DIR__.'/Annotations/HasMany.php';
 require_once __DIR__.'/Annotations/HasManyThrough.php';
 require_once __DIR__.'/Annotations/HasOne.php';
 
-class MetadataFactory
+class Factory
 {
     protected $nameResolver;
 
@@ -43,7 +44,7 @@ class MetadataFactory
 
     protected function create($entityName)
     {
-        $metadata = new Metadata;
+        $metadata = new EntityMetadata;
         $this->metadatas[$entityName] = $metadata;
 
         $metadata['entityName'] = $entityName;
@@ -55,14 +56,14 @@ class MetadataFactory
         $class = new \ReflectionClass($className);
 
         $reader = new SimpleAnnotationReader();
-        $reader->addNamespace('Agnostic\Entity\Annotations');
+        $reader->addNamespace('Agnostic\Metadata\Annotations');
 
-        $entityAnnotation = $reader->getClassAnnotation($class, 'Agnostic\Entity\Annotations\Entity');
+        $entityAnnotation = $reader->getClassAnnotation($class, 'Agnostic\Metadata\Annotations\Entity');
 
         $metadata['typeName'] = $entityAnnotation->typeName ?: Inflector::pluralize($tableizedName);
         $metadata['id'] = $entityAnnotation->id ?: $tableizedName.'_id';
         $metadata['indexes'] = $entityAnnotation->indexes ?: [];
-        $metadata['repositoryClassName'] = $entityAnnotation->repositoryClassName ?: $this->nameResolver->getRepositoryClassName($entityName);
+        $metadata['queryClassName'] = $entityAnnotation->queryClassName ?: $this->nameResolver->getQueryClassName($entityName);
 
         $metadata['relations'] = [];
 
@@ -108,6 +109,7 @@ class MetadataFactory
 
             if ($relation['relationship'] == 'HasManyThrough') {
                 // @todo
+                throw new \Agnostic\Exception('HasManyThrough not supported yet');
                 // $relation['id'] = $annotation->id ?: $metadata['id'];
                 // $relation['targetId'] = $this->get($relation['targetEntity'])['id']; 
                 // $relation['throughEntity'] = $annotation->throughEntity;

@@ -4,8 +4,8 @@ namespace Agnostic;
 use Aura\Marshal\Manager as BaseMarshaller;
 use Agnostic\Type\Builder as TypeBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
-use Agnostic\Entity\NameResolver;
-use Agnostic\Entity\Metadata;
+use Agnostic\NameResolver;
+use Agnostic\Metadata\EntityMetadata;
 
 class Marshaller extends BaseMarshaller
 {
@@ -18,9 +18,9 @@ class Marshaller extends BaseMarshaller
         $this->nameResolver = $nameResolver;
     }
 
-    public function setTypeByEntity(Metadata $metadata)
+    public function setTypeByEntity(EntityMetadata $entityMetadata)
     {
-        $typeName = $metadata['typeName'];
+        $typeName = $entityMetadata['typeName'];
 
         if (isset($this->types[$typeName])) {
             return ;
@@ -29,43 +29,43 @@ class Marshaller extends BaseMarshaller
         $this->setType(
             $typeName,
             [
-                'identity_field' => $metadata['id'],
-                'index_fields' => $metadata['indexes'],
-                'entity_class_name' => $metadata['entityClassName']
+                'identity_field' => $entityMetadata['id'],
+                'index_fields' => $entityMetadata['indexes'],
+                'entity_class_name' => $entityMetadata['entityClassName']
             ]
         );
 
-        foreach ($metadata["relations"] as $relation) {
+        foreach ($entityMetadata["relations"] as $relationMetadata) {
             $baseInfo = [
-                'native_field' => $relation['id'],
-                'foreign_type' => $relation['targetType'],
-                'foreign_field' => $relation['targetId']
+                'native_field' => $relationMetadata['id'],
+                'foreign_type' => $relationMetadata['targetType'],
+                'foreign_field' => $relationMetadata['targetId']
             ];
 
-            switch ($relation['relationship']) {
+            switch ($relationMetadata['relationship']) {
                 case 'HasMany':
-                    $this->setRelation($typeName, $relation['name'], array_merge($baseInfo, ['relationship' => 'has_many']));
+                    $this->setRelation($typeName, $relationMetadata['name'], array_merge($baseInfo, ['relationship' => 'has_many']));
                 break;
 
                 case 'BelongsTo':
-                    $this->setRelation($typeName, $relation['name'], array_merge($baseInfo, ['relationship' => 'belongs_to']));
+                    $this->setRelation($typeName, $relationMetadata['name'], array_merge($baseInfo, ['relationship' => 'belongs_to']));
                 break;
 
                 case 'HasOne':
-                    $this->setRelation($typeName, $relation['name'], array_merge($baseInfo, ['relationship' => 'has_one']));
+                    $this->setRelation($typeName, $relationMetadata['name'], array_merge($baseInfo, ['relationship' => 'has_one']));
                 break;
 
                 case 'HasManyThrough':
                     $this->setRelation(
                         $typeName,
-                        $relation['name'],
+                        $relationMetadata['name'],
                         array_merge(
                             $baseInfo,
                             [
                                 'relationship' => 'has_many_through',
-                                'through_type' => $relation['throughType'],
-                                'through_native_field' => $relation['throughId'],
-                                'through_foreign_field' => $relation['throughTargetId'],
+                                'through_type' => $relationMetadata['throughType'],
+                                'through_native_field' => $relationMetadata['throughId'],
+                                'through_foreign_field' => $relationMetadata['throughTargetId'],
                             ]
                         )
                     );

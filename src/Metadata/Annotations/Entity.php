@@ -1,7 +1,8 @@
 <?php
-namespace Agnostic\Entity\Annotations;
+namespace Agnostic\Metadata\Annotations;
 
 use Doctrine\Common\Annotations\Annotation;
+
 /**
  * @Annotation
  * @Target({"CLASS"})
@@ -9,7 +10,7 @@ use Doctrine\Common\Annotations\Annotation;
  *   @Attribute("typeName", required=false, type="string"),
  *   @Attribute("id", required=false, type="string"),
  *   @Attribute("indexes", required=false, type= "array"),
- *   @Attribute("repositoryClassName", required=false, type="string")
+ *   @Attribute("queryClassName", required=false, type="string")
  * })
  */
 class Entity extends Annotation
@@ -24,5 +25,5 @@ class Entity extends Annotation
     // index fields
     public $indexes;
 
-    public $repositoryClassName;
+    public $queryClassName;
 }
