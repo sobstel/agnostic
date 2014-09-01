@@ -31,7 +31,7 @@ class Factory
         $metadata = $this->metadataFactory->get($entityName); 
         $className = $metadata['queryClassName'];
 
-        $nativeQuery = $this->queryDriver->createNativeQuery($metadata['typeName']);
+        $nativeQuery = $this->queryDriver->createNativeQuery($metadata['tableName']);
         $query = new $className($nativeQuery, $metadata, $this->queryDriver, $this, $this->marshaller);
 
         return $query;

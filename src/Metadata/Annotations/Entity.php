@@ -7,7 +7,7 @@ use Doctrine\Common\Annotations\Annotation;
  * @Annotation
  * @Target({"CLASS"})
  * @Attributes({
- *   @Attribute("typeName", required=false, type="string"),
+ *   @Attribute("tableName", required=false, type="string"),
  *   @Attribute("id", required=false, type="string"),
  *   @Attribute("indexes", required=false, type= "array"),
  *   @Attribute("queryClassName", required=false, type="string")
@@ -17,7 +17,7 @@ class Entity extends Annotation
 {
     use AnnotationMetaTrait;
 
-    public $typeName;
+    public $tableName;
 
     // identity field
     public $id;

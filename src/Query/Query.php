@@ -53,7 +53,9 @@ class Query implements IteratorAggregate
     {
         $result = call_user_func_array([$this->nativeQuery, $name], $args);
 
-        if ($result !== $this->nativeQuery) { // only nativeQuery should be "decorated"/"proxied"
+        // only nativeQuery should be "decorated"/"proxied"
+        // othewise return original query
+        if ($result !== $this->nativeQuery) {
             return $result;
         }
 
@@ -89,9 +91,9 @@ class Query implements IteratorAggregate
         $data = $this->queryDriver->fetchData($this, $opts);
 
         // marshalize data
-        $typeName = $this->entityMetadata['typeName'];
-        $ids = $this->marshaller->$typeName->load($data);
-        $collection = $this->marshaller->$typeName->getCollection($ids);
+        $entityName = $this->entityMetadata['entityName'];
+        $ids = $this->marshaller->$entityName->load($data);
+        $collection = $this->marshaller->$entityName->getCollection($ids);
 
         // @todo: QueryPool: execute all related queries
 

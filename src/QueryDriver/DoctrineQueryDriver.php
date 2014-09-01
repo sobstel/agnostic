@@ -16,15 +16,15 @@ class DoctrineQueryDriver implements QueryDriverInterface
     /**
      * @return Doctrine\DBAL\Query\QueryBuilder
      */
-    public function createNativeQuery($typeName = null)
+    public function createNativeQuery($tableName = null)
     {
         $queryBuilder = $this->conn->createQueryBuilder();
 
-        if ($typeName) {
-            $rootAlias = substr($typeName, 0, 1);
+        if ($tableName) {
+            $rootAlias = substr($tableName, 0, 1);
             $queryBuilder
                 ->select(sprintf('%s.*', $rootAlias))
-                ->from($typeName, $rootAlias)
+                ->from($tableName, $rootAlias)
                 ;
         }
 

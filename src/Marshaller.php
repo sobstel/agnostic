@@ -20,14 +20,10 @@ class Marshaller extends BaseMarshaller
 
     public function setTypeByEntity(EntityMetadata $entityMetadata)
     {
-        $typeName = $entityMetadata['typeName'];
-
-        if (isset($this->types[$typeName])) {
-            return ;
-        }
+        $entityName = $entityMetadata['entityName'];
 
         $this->setType(
-            $typeName,
+            $entityName,
             [
                 'identity_field' => $entityMetadata['id'],
                 'index_fields' => $entityMetadata['indexes'],
@@ -38,32 +34,32 @@ class Marshaller extends BaseMarshaller
         foreach ($entityMetadata["relations"] as $relationMetadata) {
             $baseInfo = [
                 'native_field' => $relationMetadata['id'],
-                'foreign_type' => $relationMetadata['targetType'],
+                'foreign_type' => $relationMetadata['targetEntity'],
                 'foreign_field' => $relationMetadata['targetId']
             ];
 
             switch ($relationMetadata['relationship']) {
                 case 'HasMany':
-                    $this->setRelation($typeName, $relationMetadata['name'], array_merge($baseInfo, ['relationship' => 'has_many']));
+                    $this->setRelation($entityName, $relationMetadata['name'], array_merge($baseInfo, ['relationship' => 'has_many']));
                 break;
 
                 case 'BelongsTo':
-                    $this->setRelation($typeName, $relationMetadata['name'], array_merge($baseInfo, ['relationship' => 'belongs_to']));
+                    $this->setRelation($entityName, $relationMetadata['name'], array_merge($baseInfo, ['relationship' => 'belongs_to']));
                 break;
 
                 case 'HasOne':
-                    $this->setRelation($typeName, $relationMetadata['name'], array_merge($baseInfo, ['relationship' => 'has_one']));
+                    $this->setRelation($entityName, $relationMetadata['name'], array_merge($baseInfo, ['relationship' => 'has_one']));
                 break;
 
                 case 'HasManyThrough':
                     $this->setRelation(
-                        $typeName,
+                        $entityName,
                         $relationMetadata['name'],
                         array_merge(
                             $baseInfo,
                             [
                                 'relationship' => 'has_many_through',
-                                'through_type' => $relationMetadata['throughType'],
+                                'through_type' => $relationMetadata['throughEntity'],
                                 'through_native_field' => $relationMetadata['throughId'],
                                 'through_foreign_field' => $relationMetadata['throughTargetId'],
                             ]

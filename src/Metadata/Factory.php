@@ -33,24 +33,15 @@ class Factory
 
     public function get($entityName)
     {
-        if (!isset($this->metadatas[$entityName])) {
-            $metadata = $this->create($entityName);
-            $this->metadatas[$entityName] = $metadata;
-            $this->marshaller->setTypeByEntity($metadata);
+        if (isset($this->metadatas[$entityName])) {
+            return $this->metadatas[$entityName];
         }
 
-        return $this->metadatas[$entityName];
-    }
-
-    protected function create($entityName)
-    {
         $metadata = new EntityMetadata;
         $this->metadatas[$entityName] = $metadata;
 
         $metadata['entityName'] = $entityName;
         $metadata['entityClassName'] = $this->nameResolver->getEntityClassName($entityName);
-
-        $tableizedName = Inflector::tableize($entityName);
 
         $className = $this->nameResolver->getEntityClassName($entityName);
         $class = new \ReflectionClass($className);
@@ -60,8 +51,8 @@ class Factory
 
         $entityAnnotation = $reader->getClassAnnotation($class, 'Agnostic\Metadata\Annotations\Entity');
 
-        $metadata['typeName'] = $entityAnnotation->typeName ?: Inflector::pluralize($tableizedName);
-        $metadata['id'] = $entityAnnotation->id ?: $tableizedName.'_id';
+        $metadata['tableName'] = $entityAnnotation->tableName ?: Inflector::pluralize(Inflector::tableize($entityName));
+        $metadata['id'] = $entityAnnotation->id ?: sprintf('%s_id', Inflector::singularize($metadata['tableName']));
         $metadata['indexes'] = $entityAnnotation->indexes ?: [];
         $metadata['queryClassName'] = $entityAnnotation->queryClassName ?: $this->nameResolver->getQueryClassName($entityName);
 
@@ -77,7 +68,9 @@ class Factory
             $relation['relationship'] = $annotation->getTag();
             $relation['name'] = $annotation->name;
             $relation['targetEntity'] = $annotation->targetEntity;
-            $relation['targetType'] = $this->get($annotation->targetEntity)['typeName'];
+
+            // load
+            $this->get($relation['targetEntity']);
 
             if ($relation['relationship'] == 'BelongsTo') {
                 $relation['id'] = $annotation->id ?: $this->get($relation['targetEntity'])['id']; 
@@ -88,7 +81,7 @@ class Factory
                     $relation['targetId'] = $this->get($relation['targetEntity'])['id'];
 
                     if ($relation['targetId'] == 'id') {
-                        $relation['targetId'] = sprintf('%s_id', Inflector::singularize($this->get($relation['targetEntity'])['typeName']));
+                        $relation['targetId'] = sprintf('%s_id', Inflector::singularize($this->get($relation['targetEntity'])['tableName']));
                     }
                 }
             }
@@ -102,7 +95,7 @@ class Factory
                     $relation['targetId'] = $metadata['id'];
 
                     if ($relation['targetId'] == 'id') {
-                        $relation['targetId'] = sprintf('%s_id', $metadata['typeName']);
+                        $relation['targetId'] = sprintf('%s_id', $metadata['tableName']);
                     }
                 }
             }
@@ -113,13 +106,14 @@ class Factory
                 // $relation['id'] = $annotation->id ?: $metadata['id'];
                 // $relation['targetId'] = $this->get($relation['targetEntity'])['id']; 
                 // $relation['throughEntity'] = $annotation->throughEntity;
-                // $relation['throughType'] =  $this->get($annotation->throughEntity)['typeName'];
                 // $relation['throughId'] = $annotation->throughId ?: $relation['id'];
                 // $relation['throughTargetId'] = $annotation->throughTargetId ?: $this->get($relation['throughEntity'])['id'];
             }
 
             $metadata['relations'][$relation['name']] = $relation;
         }
+
+        $this->marshaller->setTypeByEntity($metadata);
 
         return $metadata;
     }
