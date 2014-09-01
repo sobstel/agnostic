@@ -36,11 +36,6 @@ class Query implements IteratorAggregate
         $this->marshaller = $marshaller;
     }
 
-    public function getNativeQuery()
-    {
-        return $this->nativeQuery;
-    }
-
     public function getIterator()
     {
         return new ArrayIterator($this->fetch());
@@ -76,26 +71,25 @@ class Query implements IteratorAggregate
         return $this;
     }
 
-    public function with($name)
+    public function with($names)
     {
-        // @todo: add to QueryPool instead of local $with
+        if (!is_array($names)) {
+            $names = [$names];
+        }
 
-        $this->with[] = $name;
+        $this->with = array_merge($this->with, $names);
 
         return $this;
     }
 
     public function fetch(array $opts = [])
     {
-        // @todo: call QueryPool instead
         $data = $this->queryDriver->fetchData($this, $opts);
 
         // marshalize data
         $entityName = $this->entityMetadata['entityName'];
         $ids = $this->marshaller->$entityName->load($data);
         $collection = $this->marshaller->$entityName->getCollection($ids);
-
-        // @todo: QueryPool: execute all related queries
 
         // handle relations
         foreach ($this->with as $name) {

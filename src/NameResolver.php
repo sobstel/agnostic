@@ -16,7 +16,7 @@ class NameResolver
 
     public function getQueryClassName($entityName)
     {
-        return $this->getClassName($entityName, $this->queryPrefixes, 'Agnostic\Query\Query');
+        return $this->getClassName($entityName.'Query', $this->queryPrefixes, 'Agnostic\Query\Query');
     }
 
     protected function getClassName($name, array $prefixes, $defaultClassname)

@@ -21,8 +21,7 @@ class TemporaryTest extends TestCase
             ->orderBy('date_time', 'DESC')
             // ->refine('') // scope
             ->with('round')
-            ->with('teamA')
-            ->with('teamB')
+            ->with(['teamA', 'teamB'])
             ->with('events')
             ->fetch();
 
