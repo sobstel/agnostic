@@ -3,14 +3,14 @@ namespace Agnostic\Query;
 
 use Agnostic\QueryDriver\QueryDriverInterface;
 use Agnostic\NameResolver;
-use Agnostic\Marshaller;
+use Agnostic\Marshal\Manager as MarshalManager;
 use Agnostic\Metadata\Factory as MetadataFactory;
 
 class Factory
 {
     protected $queryDriver;
 
-    protected $marshaller;
+    protected $marshalManager;
 
     protected $metadataFactory;
 
@@ -22,8 +22,8 @@ class Factory
             $nameResolver = new NameResolver();
         }
 
-        $this->marshaller = new Marshaller($nameResolver);
-        $this->metadataFactory = new MetadataFactory($nameResolver, $this->marshaller);
+        $this->marshalManager = new MarshalManager($nameResolver);
+        $this->metadataFactory = new MetadataFactory($nameResolver, $this->marshalManager);
     }
 
     public function create($entityName)
@@ -32,7 +32,7 @@ class Factory
         $className = $metadata['queryClassName'];
 
         $nativeQuery = $this->queryDriver->createNativeQuery($metadata['tableName']);
-        $query = new $className($nativeQuery, $metadata, $this->queryDriver, $this, $this->marshaller);
+        $query = new $className($nativeQuery, $metadata, $this->queryDriver, $this, $this->marshalManager);
 
         return $query;
     }

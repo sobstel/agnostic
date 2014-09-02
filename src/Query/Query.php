@@ -4,7 +4,7 @@ namespace Agnostic\Query;
 use Agnostic\Metadata\EntityMetadata;
 use Agnostic\QueryDriver\QueryDriverInterface;
 use Agnostic\Query\Factory as QueryFactory;
-use Agnostic\Marshaller;
+use Agnostic\Marshal\Manager as MarshalManager;
 
 use IteratorAggregate;
 use ArrayIterator;
@@ -20,20 +20,20 @@ class Query implements IteratorAggregate
 
     protected $queryFactory;
 
-    protected $marshaller;
+    protected $marshalManager;
 
     protected $with = [];
 
     /**
      * @param object
      */
-    public function __construct($nativeQuery, EntityMetadata $entityMetadata, QueryDriverInterface $queryDriver, QueryFactory $queryFactory, Marshaller $marshaller)
+    public function __construct($nativeQuery, EntityMetadata $entityMetadata, QueryDriverInterface $queryDriver, QueryFactory $queryFactory, MarshalManager $marshalManager)
     {
         $this->nativeQuery = $nativeQuery;
         $this->entityMetadata = $entityMetadata;
         $this->queryDriver = $queryDriver;
         $this->queryFactory = $queryFactory;
-        $this->marshaller = $marshaller;
+        $this->marshalManager = $marshalManager;
     }
 
     public function getIterator()
@@ -88,8 +88,9 @@ class Query implements IteratorAggregate
 
         // marshalize data
         $entityName = $this->entityMetadata['entityName'];
-        $ids = $this->marshaller->$entityName->load($data);
-        $collection = $this->marshaller->$entityName->getCollection($ids);
+        $this->marshalManager->$entityName->load($data);
+
+        $collection = $this->marshalManager->$entityName->getCollection($ids);
 
         // handle relations
         foreach ($this->with as $name) {

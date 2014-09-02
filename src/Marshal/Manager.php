@@ -1,13 +1,13 @@
 <?php
-namespace Agnostic;
+namespace Agnostic\Marshal;
 
-use Aura\Marshal\Manager as BaseMarshaller;
+use Aura\Marshal\Manager as BaseManager;
 use Agnostic\Type\Builder as TypeBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
 use Agnostic\NameResolver;
 use Agnostic\Metadata\EntityMetadata;
 
-class Marshaller extends BaseMarshaller
+class Manager extends BaseManager
 {
     protected $nameResolver;
 

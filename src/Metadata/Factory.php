@@ -1,7 +1,7 @@
 <?php
 namespace Agnostic\Metadata;
 
-use Agnostic\Marshaller;
+use Agnostic\Marshal\Manager as MarshalManager;
 use Agnostic\NameResolver;
 use Agnostic\Metadata\EntityMetadata;
 use Agnostic\Metadata\RelationMetadata;
@@ -21,14 +21,14 @@ class Factory
 {
     protected $nameResolver;
 
-    protected $marshaller;
+    protected $marshalManager;
 
     protected $metadatas = [];
 
-    public function __construct(NameResolver $nameResolver, Marshaller $marshaller)
+    public function __construct(NameResolver $nameResolver, MarshalManager $marshalManager)
     {
         $this->nameResolver = $nameResolver;
-        $this->marshaller = $marshaller;
+        $this->marshalManager = $marshalManager;
     }
 
     public function get($entityName)
@@ -113,7 +113,7 @@ class Factory
             $metadata['relations'][$relation['name']] = $relation;
         }
 
-        $this->marshaller->setTypeByEntity($metadata);
+        $this->marshalManager->setTypeByEntity($metadata);
 
         return $metadata;
     }
