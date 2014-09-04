@@ -16,19 +16,19 @@ class Factory
 
     public function __construct(QueryDriverInterface $queryDriver, NameResolver $nameResolver = null)
     {
-        $this->queryDriver = $queryDriver;  
+        $this->queryDriver = $queryDriver;
 
         if (!$nameResolver) {
             $nameResolver = new NameResolver();
         }
 
-        $this->marshalManager = new MarshalManager($nameResolver);
+        $this->marshalManager = new MarshalManager();
         $this->metadataFactory = new MetadataFactory($nameResolver, $this->marshalManager);
     }
 
     public function create($entityName)
     {
-        $metadata = $this->metadataFactory->get($entityName); 
+        $metadata = $this->metadataFactory->get($entityName);
         $className = $metadata['queryClassName'];
 
         $nativeQuery = $this->queryDriver->createNativeQuery($metadata['tableName']);

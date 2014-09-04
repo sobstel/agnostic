@@ -4,18 +4,13 @@ namespace Agnostic\Marshal;
 use Aura\Marshal\Manager as BaseManager;
 use Agnostic\Type\Builder as TypeBuilder;
 use Aura\Marshal\Relation\Builder as RelationBuilder;
-use Agnostic\NameResolver;
 use Agnostic\Metadata\EntityMetadata;
 
 class Manager extends BaseManager
 {
-    protected $nameResolver;
-
-    public function __construct(NameResolver $nameResolver)
-    {    
+    public function __construct()
+    {
         parent::__construct(new TypeBuilder, new RelationBuilder);
-
-        $this->nameResolver = $nameResolver;
     }
 
     public function setTypeByEntity(EntityMetadata $entityMetadata)

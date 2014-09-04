@@ -73,7 +73,7 @@ class Factory
             $this->get($relation['targetEntity']);
 
             if ($relation['relationship'] == 'BelongsTo') {
-                $relation['id'] = $annotation->id ?: $this->get($relation['targetEntity'])['id']; 
+                $relation['id'] = $annotation->id ?: $this->get($relation['targetEntity'])['id'];
 
                 if ($annotation->targetId) {
                     $relation['targetId'] = $annotation->targetId;
@@ -104,7 +104,7 @@ class Factory
                 // @todo
                 throw new \Agnostic\Exception('HasManyThrough not supported yet');
                 // $relation['id'] = $annotation->id ?: $metadata['id'];
-                // $relation['targetId'] = $this->get($relation['targetEntity'])['id']; 
+                // $relation['targetId'] = $this->get($relation['targetEntity'])['id'];
                 // $relation['throughEntity'] = $annotation->throughEntity;
                 // $relation['throughId'] = $annotation->throughId ?: $relation['id'];
                 // $relation['throughTargetId'] = $annotation->throughTargetId ?: $this->get($relation['throughEntity'])['id'];

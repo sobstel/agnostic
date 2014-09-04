@@ -5,6 +5,7 @@ use Agnostic\Metadata\EntityMetadata;
 use Agnostic\QueryDriver\QueryDriverInterface;
 use Agnostic\Query\Factory as QueryFactory;
 use Agnostic\Marshal\Manager as MarshalManager;
+use Agnostic\Query\QueryStack;
 
 use IteratorAggregate;
 use ArrayIterator;
@@ -12,6 +13,7 @@ use ArrayIterator;
 // proxy over native query
 class Query implements IteratorAggregate
 {
+    /*** @var object */
     protected $nativeQuery;
 
     protected $entityMetadata;
@@ -22,7 +24,9 @@ class Query implements IteratorAggregate
 
     protected $marshalManager;
 
-    protected $with = [];
+    protected $queryStack;
+
+    protected $opts = [];
 
     /**
      * @param object
@@ -34,6 +38,12 @@ class Query implements IteratorAggregate
         $this->queryDriver = $queryDriver;
         $this->queryFactory = $queryFactory;
         $this->marshalManager = $marshalManager;
+        $this->queryStack = new QueryStack($this);
+    }
+
+    public function getEntityMetadata()
+    {
+        return $this->entityMetadata;
     }
 
     public function getIterator()
@@ -71,31 +81,54 @@ class Query implements IteratorAggregate
         return $this;
     }
 
-    public function with($names)
+    /**
+     * @param mixed
+     * @return Query
+     */
+    public function with($spec)
     {
-        if (!is_array($names)) {
-            $names = [$names];
+        if (is_array($spec)) {
+            $names = $spec;
+        } else {
+            $names = [$spec];
         }
 
-        $this->with = array_merge($this->with, $names);
+        foreach ($names as $k => $v) {
+            $isNestedSpec = (!is_int($k));
+
+            $name = $isNestedSpec ? $k : $v;
+
+            $relationMetadata = $this->entityMetadata['relations'][$name];
+            $targetQuery = $this->queryFactory->create($relationMetadata['targetEntity']);
+            $this->queryStack->add($name, $targetQuery);
+
+            if ($isNestedSpec) {
+                $targetQuery->with($v);
+            }
+        }
 
         return $this;
     }
 
+    public function opts(array $opts)
+    {
+        $this->opts = array_merge($this->opts, $opts);
+    }
+
+    // flush
     public function fetch(array $opts = [])
     {
+        $opts = array_merge($this->opts, $opts);
+
         $data = $this->queryDriver->fetchData($this, $opts);
 
         // marshalize data
         $entityName = $this->entityMetadata['entityName'];
-        $this->marshalManager->$entityName->load($data);
+        $ids = $this->marshalManager->$entityName->load($data);
 
         $collection = $this->marshalManager->$entityName->getCollection($ids);
 
-        // handle relations
-        foreach ($this->with as $name) {
-            $this->fetchRelated($collection, $name);
-        }
+        $this->queryStack->fetch($collection);
 
         return $collection;
     }
@@ -105,25 +138,8 @@ class Query implements IteratorAggregate
         return $this->fetch($opts);
     }
 
-    protected function fetchRelated($collection, $name)
+    public function __toString()
     {
-        $relationMetadata = $this->entityMetadata['relations'][$name];
-
-        $ids = $collection->getFieldValues($relationMetadata['id']);
-
-        $targetQuery = $this->queryFactory->create($relationMetadata['targetEntity']);
-        
-        switch ($relationMetadata['relationship']) {
-            case 'BelongsTo':
-            case 'HasOne':
-            case 'HasMany':
-                $targetQuery->findBy($relationMetadata['targetId'], $ids)->fetch();
-            break;
-
-            case 'HasManyThrough':
-                // @todo
-                throw new \Agnostic\Exception('HasManyThrough not supported yet');
-            break;
-        }
+        return $this->nativeQuery->__toString();
     }
 }

@@ -3,5 +3,4 @@ namespace Agnostic\QueryDriver;
 
 class PDOQuery
 {
-    
 }

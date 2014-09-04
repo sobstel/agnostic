@@ -5,5 +5,4 @@ use Agnostic\QueryDriver\QueryDriverInterface;
 
 class PDOQueryDriver implements QueryDriverInterface
 {
-    
 }

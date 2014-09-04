@@ -2,7 +2,7 @@
 namespace Agnostic\QueryDriver;
 
 interface QueryDriverInterface
-{ 
+{
     /**
      * @param string
      * @return object Query object
