@@ -12,6 +12,8 @@ class Factory
 
     protected $marshalManager;
 
+    protected $nameResolver;
+
     protected $metadataFactory;
 
     public function __construct(QueryDriverInterface $queryDriver, NameResolver $nameResolver = null)
@@ -22,17 +24,18 @@ class Factory
             $nameResolver = new NameResolver();
         }
 
-        $this->marshalManager = new MarshalManager();
-        $this->metadataFactory = new MetadataFactory($nameResolver, $this->marshalManager);
+        $this->nameResolver = $nameResolver;
+        $this->metadataFactory = new MetadataFactory($nameResolver);
+        $this->marshalManager = new MarshalManager($this->metadataFactory);
     }
 
-    public function create($entityName)
+    public function create($name)
     {
-        $metadata = $this->metadataFactory->get($entityName);
-        $className = $metadata['queryClassName'];
+        $class = $this->nameResolver->getQueryClassName($name);
+        $metadata = $this->metadataFactory->get($name);
 
-        $nativeQuery = $this->queryDriver->createNativeQuery($metadata['tableName']);
-        $query = new $className($nativeQuery, $metadata, $this->queryDriver, $this, $this->marshalManager);
+        $nativeQuery = $this->queryDriver->createNativeQuery($metadata->getTableName());
+        $query = new $class($nativeQuery, $metadata, $this->queryDriver, $this, $this->marshalManager);
 
         return $query;
     }

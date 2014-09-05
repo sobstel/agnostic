@@ -1,27 +1,55 @@
 <?php
 namespace Agnostic;
 
+use Doctrine\Common\Inflector\Inflector;
+
 class NameResolver
 {
-    protected $entityNames = [];
-
-    protected $entityPrefixes = [];
-
+    /*** @var string[] */
     protected $queryPrefixes = [];
 
-    public function getEntityClassName($entityName)
+    /*** @var string[] */
+    protected $entityPrefixes = [];
+
+    public function __construct($prefix = null)
     {
-        return $this->getClassName($entityName, $this->entityPrefixes, 'Agnostic\Entity\Entity');
+        if ($prefix !== null) {
+            $this->registerPrefix($prefix);
+        }
     }
 
-    public function getQueryClassName($entityName)
+    public function registerPrefix($prefix)
     {
-        return $this->getClassName($entityName.'Query', $this->queryPrefixes, 'Agnostic\Query\Query');
+        $this->registerQueryPrefix($prefix);
+        $this->registerEntityPrefix($prefix);
+    }
+
+    public function registerQueryPrefix($prefix)
+    {
+        $this->queryPrefixes[] = $prefix;
+    }
+
+    public function registerEntityPrefix($prefix)
+    {
+        $this->entityPrefixes[] = $prefix;
+    }
+
+    public function getQueryClassName($name)
+    {
+        return $this->getClassName(sprintf('%sQuery', $name), $this->queryPrefixes, 'Agnostic\Query\Query');
+    }
+
+    public function getEntityClassName($name)
+    {
+        return $this->getClassName($name, $this->entityPrefixes, 'Agnostic\Entity\Entity');
     }
 
     protected function getClassName($name, array $prefixes, $defaultClassname)
     {
+        $name = Inflector::classify($name);
+
         foreach ($prefixes as $prefix) {
+            $prefix = rtrim($prefix, '\\').'\\'; // ensure backslash at the end
             $className = $prefix.$name;
 
             if (class_exists($className, true)) {
@@ -30,17 +58,5 @@ class NameResolver
         }
 
         return $defaultClassname;
-    }
-
-    public function registerEntityPrefix($prefix)
-    {
-        $prefix = rtrim($prefix, '\\').'\\'; // ensure backslash at the end
-        $this->entityPrefixes[] = $prefix;
-    }
-
-    public function registerQueryPrefix($prefix)
-    {
-        $prefix = rtrim($prefix, '\\').'\\'; // ensure backslash at the end
-        $this->queryPrefixes[] = $prefix;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Tests\Entity;
+namespace Agnostic\Tests\Model;
 
 use Agnostic\Entity\Entity;
 
@@ -11,9 +11,6 @@ use Agnostic\Entity\Entity;
  * @BelongsTo(name="teamA", targetEntity="Team", id="team_A_id")
  * @BelongsTo(name="teamB", targetEntity="Team", id="team_B_id")
  * @HasMany(name="events", targetEntity="Event")
- *
- * no, jut use methods on top of existing relations!
- * HasMany(name="goals", targetEntity="Event", scope={"goals"})
  */
 class Match extends Entity
 {

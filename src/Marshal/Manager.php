@@ -3,30 +3,59 @@ namespace Agnostic\Marshal;
 
 use Aura\Marshal\Manager as BaseManager;
 use Agnostic\Type\Builder as TypeBuilder;
-use Aura\Marshal\Relation\Builder as RelationBuilder;
-use Agnostic\Metadata\EntityMetadata;
+use Agnostic\Relation\Builder as RelationBuilder;
+use Agnostic\Metadata\Factory as MetadataFactory;
 
 class Manager extends BaseManager
 {
-    public function __construct()
+    protected $metadataFactory;
+
+    public function __construct(MetadataFactory $metadataFactory)
     {
         parent::__construct(new TypeBuilder, new RelationBuilder);
+        $this->metadataFactory = $metadataFactory;
     }
 
-    public function setTypeByEntity(EntityMetadata $entityMetadata)
+    public function __get($name)
     {
-        $entityName = $entityMetadata['entityName'];
+        return $this->getType($name);
+
+
+        return parent::__get($name);
+    }
+
+    public function getType($name)
+    {
+        if (!isset($this->types[$name])) {
+            $metadata = $this->metadataFactory->get($name);
+
+            // load on-the-fly
+            $this->marshalManager->setType(
+                $name,
+                [
+                    'identity_field' => $metadata->getIdentityField(),
+                    'entity_class_name' => $metadata->getEntityClassName()
+                ]
+            );
+        }
+
+        return parent::__get($name);
+    }
+
+    public function setTypeByEntity(EntityMetadata $metadata)
+    {
+        $entityName = $metadata['entityName'];
 
         $this->setType(
             $entityName,
             [
-                'identity_field' => $entityMetadata['id'],
-                'index_fields' => $entityMetadata['indexes'],
-                'entity_class_name' => $entityMetadata['entityClassName']
+                'identity_field' => $metadata['id'],
+                'index_fields' => $metadata['indexes'],
+                'entity_class_name' => $metadata['entityClassName']
             ]
         );
 
-        foreach ($entityMetadata["relations"] as $relationMetadata) {
+        foreach ($metadata["relations"] as $relationMetadata) {
             $baseInfo = [
                 'native_field' => $relationMetadata['id'],
                 'foreign_type' => $relationMetadata['targetEntity'],

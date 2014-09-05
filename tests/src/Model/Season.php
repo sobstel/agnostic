@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Tests\Entity;
+namespace Agnostic\Tests\Model;
 
 use Agnostic\Entity\Entity;
 

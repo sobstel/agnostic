@@ -11,19 +11,20 @@ class TemporaryTest extends TestCase
         $queryDriver = new \Agnostic\QueryDriver\DoctrineQueryDriver($conn);
         $queryDriver = new \Agnostic\QueryDriver\DebugQueryDriver($queryDriver);
 
-        $nameResolver = new \Agnostic\NameResolver();
-        $nameResolver->registerEntityPrefix('Agnostic\Tests\Entity', __DIR__.'/Tests/Entity');
-        $nameResolver->registerQueryPrefix('Agnostic\Tests\Query', __DIR__.'/Tests/Query');
+        $nameResolver = new \Agnostic\NameResolver('Agnostic\Tests\Model');
 
         $qf = new QueryFactory($queryDriver, $nameResolver);
 
         $r = $qf->create("Match")
             ->find([57045, 157046, 156746, 156679, 156513, 156531])
             ->orderBy('date_time', 'DESC')
-            ->with(['events', 'teamA', 'teamB', 'round' => ['season' => 'competition']])
-            // ->with('round', function($query) { $query->with('season'); }))
-            ->fetch();
-
+            // ->with(['events', 'teamA', 'teamB', 'round' => ['season' => 'competition']])
+            // ->with('round', function($targetQuery) { $targetQuery->with('season'); }))
+            // ->with('goals', function($targetQuery){
+//
+            // })
+           ->fetch();
+var_dump($r);exit;
         // var_dump(count($r[0]->events), $r[0]->events[0]->toArray());
 
         foreach ($r as $k => $v) {

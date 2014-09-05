@@ -1,22 +1,22 @@
 <?php
 namespace Agnostic\Query;
 
-use Agnostic\Metadata\EntityMetadata;
+use Agnostic\Metadata\Metadata;
 use Agnostic\QueryDriver\QueryDriverInterface;
 use Agnostic\Query\Factory as QueryFactory;
 use Agnostic\Marshal\Manager as MarshalManager;
+use Agnostic\Query\Info;
 use Agnostic\Query\QueryStack;
 
 use IteratorAggregate;
 use ArrayIterator;
 
-// proxy over native query
 class Query implements IteratorAggregate
 {
     /*** @var object */
     protected $nativeQuery;
 
-    protected $entityMetadata;
+    protected $metadata;
 
     protected $queryDriver;
 
@@ -31,24 +31,14 @@ class Query implements IteratorAggregate
     /**
      * @param object
      */
-    public function __construct($nativeQuery, EntityMetadata $entityMetadata, QueryDriverInterface $queryDriver, QueryFactory $queryFactory, MarshalManager $marshalManager)
+    public function __construct($nativeQuery, Metadata $metadata, QueryDriverInterface $queryDriver, QueryFactory $queryFactory, MarshalManager $marshalManager)
     {
         $this->nativeQuery = $nativeQuery;
-        $this->entityMetadata = $entityMetadata;
+        $this->metadata = $metadata;
         $this->queryDriver = $queryDriver;
         $this->queryFactory = $queryFactory;
         $this->marshalManager = $marshalManager;
         $this->queryStack = new QueryStack($this);
-    }
-
-    public function getEntityMetadata()
-    {
-        return $this->entityMetadata;
-    }
-
-    public function getIterator()
-    {
-        return new ArrayIterator($this->fetch());
     }
 
     /**
@@ -76,7 +66,7 @@ class Query implements IteratorAggregate
 
     public function find(array $values)
     {
-        $this->findBy($this->entityMetadata['id'], $values);
+        $this->findBy($this->metadata->getIdentityField(), $values);
 
         return $this;
     }
@@ -98,7 +88,7 @@ class Query implements IteratorAggregate
 
             $name = $isNestedSpec ? $k : $v;
 
-            $relationMetadata = $this->entityMetadata['relations'][$name];
+            $relationMetadata = $this->metadata['relations'][$name];
             $targetQuery = $this->queryFactory->create($relationMetadata['targetEntity']);
             $this->queryStack->add($name, $targetQuery);
 
@@ -123,12 +113,19 @@ class Query implements IteratorAggregate
         $data = $this->queryDriver->fetchData($this, $opts);
 
         // marshalize data
-        $entityName = $this->entityMetadata['entityName'];
-        $ids = $this->marshalManager->$entityName->load($data);
+        $name = $this->metadata->getName();
+        $this->marshalManager->setType(
+            $name,
+            [
+                'identity_field' => $this->metadata->getIdentityField(),
+                'entity_class_name' => $this->metadata->getEntityClassName()
+            ]
+        );
+        $ids = $this->marshalManager->$name->load($data);
 
-        $collection = $this->marshalManager->$entityName->getCollection($ids);
+        $collection = $this->marshalManager->$name->getCollection($ids);
 
-        $this->queryStack->fetch($collection);
+        // $this->fetchRelated($collection);
 
         return $collection;
     }
@@ -138,8 +135,18 @@ class Query implements IteratorAggregate
         return $this->fetch($opts);
     }
 
+    public function getIterator()
+    {
+        return new ArrayIterator($this->fetch());
+    }
+
     public function __toString()
     {
         return $this->nativeQuery->__toString();
     }
+
+    // public function fetchRelated($collection)
+    // {
+    //     $this->queryStack->fetch($collection);
+    // }
 }
