@@ -114,13 +114,7 @@ class Query implements IteratorAggregate
 
         // marshalize data
         $name = $this->metadata->getName();
-        $this->marshalManager->setType(
-            $name,
-            [
-                'identity_field' => $this->metadata->getIdentityField(),
-                'entity_class_name' => $this->metadata->getEntityClassName()
-            ]
-        );
+
         $ids = $this->marshalManager->$name->load($data);
 
         $collection = $this->marshalManager->$name->getCollection($ids);

@@ -19,9 +19,6 @@ class Manager extends BaseManager
     public function __get($name)
     {
         return $this->getType($name);
-
-
-        return parent::__get($name);
     }
 
     public function getType($name)
@@ -30,7 +27,7 @@ class Manager extends BaseManager
             $metadata = $this->metadataFactory->get($name);
 
             // load on-the-fly
-            $this->marshalManager->setType(
+            $this->setType(
                 $name,
                 [
                     'identity_field' => $metadata->getIdentityField(),
@@ -42,18 +39,21 @@ class Manager extends BaseManager
         return parent::__get($name);
     }
 
+    /**
+     * @deprecated
+     */
     public function setTypeByEntity(EntityMetadata $metadata)
     {
         $entityName = $metadata['entityName'];
 
-        $this->setType(
-            $entityName,
-            [
-                'identity_field' => $metadata['id'],
-                'index_fields' => $metadata['indexes'],
-                'entity_class_name' => $metadata['entityClassName']
-            ]
-        );
+        // $this->setType(
+        //     $entityName,
+        //     [
+        //         'identity_field' => $metadata['id'],
+        //         'index_fields' => $metadata['indexes'],
+        //         'entity_class_name' => $metadata['entityClassName']
+        //     ]
+        // );
 
         foreach ($metadata["relations"] as $relationMetadata) {
             $baseInfo = [
