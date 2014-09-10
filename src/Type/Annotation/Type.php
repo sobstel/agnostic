@@ -1,7 +1,7 @@
 <?php
-namespace Agnostic\Metadata\Annotation;
+namespace Agnostic\Type\Annotation;
 
-use Agnostic\Metadata\Annotation\Annotation;
+use Agnostic\Type\Annotation\Annotation;
 
 /**
  * @Annotation
@@ -12,7 +12,7 @@ use Agnostic\Metadata\Annotation\Annotation;
  *   @Attribute("identityField", required=false, type="string"),
  * })
  */
-class Query extends Annotation
+class Type extends Annotation
 {
     public $entity;
 

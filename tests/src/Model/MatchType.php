@@ -1,10 +1,10 @@
 <?php
 namespace Agnostic\Tests\Model;
 
-use Agnostic\Query\Query;
+use Agnostic\Type\Type;
 
 /**
- * @Queryy(entity="Match", table="matches", identityField="match_id")
+ * @Type(entity="Match", table="matches", identityField="match_id")
  * @BelongsTo(name="round", query="Round")
  * @BelongsTo(name="group", query="Group")
  * @BelongsTo(name="venue", query="Venue")
@@ -13,7 +13,7 @@ use Agnostic\Query\Query;
  * @HasMany(name="events", query="Event")
  */
 //  * automatically read from relations native_fields: index_fields={"round_id","team_A_id","team_B_id"})
-class MatchQuery extends Query
+class MatchType extends Type
 {
     /*** @Related(query="events") */
     public function withGoals(Query $query)

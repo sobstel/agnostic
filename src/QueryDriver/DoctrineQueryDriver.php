@@ -16,7 +16,7 @@ class DoctrineQueryDriver implements QueryDriverInterface
     /**
      * @return Doctrine\DBAL\Query\QueryBuilder
      */
-    public function createNativeQuery($tableName = null)
+    public function createQuery($tableName = null)
     {
         $queryBuilder = $this->conn->createQueryBuilder();
 

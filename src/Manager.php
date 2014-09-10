@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Marshal;
+namespace Agnostic;
 
 use Aura\Marshal\Manager as BaseManager;
 use Agnostic\Type\Builder as TypeBuilder;
@@ -8,12 +8,13 @@ use Agnostic\Metadata\Factory as MetadataFactory;
 
 class Manager extends BaseManager
 {
-    protected $metadataFactory;
-
-    public function __construct(MetadataFactory $metadataFactory)
+    public function __construct(TypeBuilder $type_builder, RelationBuilder $relation_builder = null, array $types = [])
     {
-        parent::__construct(new TypeBuilder, new RelationBuilder);
-        $this->metadataFactory = $metadataFactory;
+        if (!$relation_builder) {
+            $relation_builder = new RelationBuilder;
+        }
+
+        parent::__construct($type_builder, $relation_builder, $types);
     }
 
     public function __get($name)
@@ -21,22 +22,33 @@ class Manager extends BaseManager
         return $this->getType($name);
     }
 
+    public function get($name)
+    {
+        return $this->getType($name);
+    }
+
     public function getType($name)
     {
-        if (!isset($this->types[$name])) {
-            $metadata = $this->metadataFactory->get($name);
+        // @todo: normalize name with Inflector
 
-            // load on-the-fly
-            $this->setType(
-                $name,
-                [
-                    'identity_field' => $metadata->getIdentityField(),
-                    'entity_class_name' => $metadata->getEntityClassName()
-                ]
-            );
+        if (!isset($this->types[$name])) {
+            $this->buildType($name);
         }
 
         return parent::__get($name);
+    }
+
+    protected function buildType($name)
+    {
+        // @todo: normalize name with Inflector
+
+        if (!isset($this->types[$name])) {
+            $this->types[$name] = [];
+        }
+
+        $this->types[$name]['name'] = $name;
+
+        return parent::buildType($name);
     }
 
     /**

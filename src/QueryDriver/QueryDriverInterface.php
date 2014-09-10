@@ -7,7 +7,7 @@ interface QueryDriverInterface
      * @param string
      * @return object Query object
      */
-    public function createNativeQuery($tableName = null);
+    public function createQuery($tableName = null);
 
     /**
      * @param object

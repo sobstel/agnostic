@@ -6,19 +6,19 @@ use Agnostic\Manager;
 
 class Builder implements BuilderInterface
 {
-    protected $className = 'Agnostic\Entity\Entity';
+    protected $class = 'Agnostic\Entity\Entity';
 
-    public function __construct($className = null)
+    public function __construct($class = null)
     {
-        if ($className) {
-            $this->className = $className;
+        if ($class) {
+            $this->class = $class;
         }
     }
 
     public function newInstance(array $data)
     {
-        $className = $this->className;
-        $entity = new $className;
+        $class = $this->class;
+        $entity = new $class;
 
         foreach ($data as $field => $value) {
             $entity->offsetSet($field, $value);

@@ -1,8 +1,8 @@
 <?php
 namespace Agnostic\Collection;
 
-use Aura\Marshal\Collection\GenericCollection;
+use Aura\Marshal\Collection\GenericCollection as BaseCollection;
 
-class Collection extends GenericCollection
+class Collection extends BaseCollection
 {
 }

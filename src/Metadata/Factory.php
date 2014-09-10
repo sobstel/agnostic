@@ -6,14 +6,6 @@ use Agnostic\Metadata\Metadata;
 use Doctrine\Common\Inflector\Inflector;
 use ReflectionClass;
 
-// annotations definitions need to be required explicitly...
-// ... otherwise they're not visible for SimpleAnnotationReader
-require_once __DIR__.'/Annotations/Entity.php';
-require_once __DIR__.'/Annotations/BelongsTo.php';
-require_once __DIR__.'/Annotations/HasMany.php';
-require_once __DIR__.'/Annotations/HasManyThrough.php';
-require_once __DIR__.'/Annotations/HasOne.php';
-
 class Factory
 {
     protected $nameResolver;

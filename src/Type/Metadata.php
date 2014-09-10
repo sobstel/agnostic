@@ -1,7 +1,6 @@
 <?php
-namespace Agnostic\Metadata;
+namespace Agnostic\Type;
 
-use Agnostic\NameResolver;
 use Agnostic\Metadata\Annotation\Query as QueryAnnotation;
 use Agnostic\Query\Query;
 use ReflectionClass;
@@ -13,9 +12,7 @@ class Metadata
 {
     static protected $isAnnotationLoaderRegistered = false;
 
-    protected $name;
-
-    protected $nameResolver;
+    protected $type;
 
     /*** @var ReflectionClass */
     protected $refClass;
@@ -37,28 +34,26 @@ class Metadata
         }
     }
 
-    public function __construct($name, NameResolver $nameResolver)
+    public function __construct(Type $type)
     {
         self::registerAnnotationLoader();
 
-        $this->name = $name;
-        $this->nameResolver = $nameResolver;
-
-        $this->refClass = new ReflectionClass($this->nameResolver->getQueryClassName($name));
+        $this->type = $type;
+        $this->refClass = new ReflectionClass($type);
 
         $annotationReader = new AnnotationReader;
-        $annotationReader->addNamespace('Agnostic\Metadata\Annotation');
+        $annotationReader->addNamespace('Agnostic\Type\Annotation');
         $this->annotationReader = $annotationReader;
     }
 
     public function getName()
     {
-        return $this->name;
+        return $this->type->getName();
     }
 
     public function getEntityName()
     {
-        return $this->getQueryAnnotation()->entity ?: $this->name;
+        return $this->getTypeAnnotation()->entity ?: $this->getName();
     }
 
     public function getEntityClassName()
@@ -68,12 +63,12 @@ class Metadata
 
     public function getTableName()
     {
-        return $this->getQueryAnnotation()->table ?: Inflector::pluralize(Inflector::tableize($this->name));
+        return $this->getTypeAnnotation()->table ?: Inflector::pluralize(Inflector::tableize($this->name));
     }
 
     public function getIdentityField()
     {
-        return $this->getQueryAnnotation()->identityField ?: sprintf('%s_id', Inflector::singularize($this->getTableName()));
+        return $this->getTypeAnnotation()->identityField ?: sprintf('%s_id', Inflector::singularize($this->getTableName()));
     }
 
     public function getRelationInfo($name)
@@ -138,9 +133,9 @@ class Metadata
         }
     }
 
-    protected function getQueryAnnotation()
+    protected function getTypeAnnotation()
     {
-        $queryAnnotations = $this->getClassAnnotations('Query');
+        $queryAnnotations = $this->getClassAnnotations('Type');
 
         if (empty($queryAnnotations)) {
             return new QueryAnnotation([]);

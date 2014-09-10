@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic\Metadata\Annotation;
+namespace Agnostic\Type\Annotation;
 
 use Doctrine\Common\Annotations\Annotation as BaseAnnotation;
 

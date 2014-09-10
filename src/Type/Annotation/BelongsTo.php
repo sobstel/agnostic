@@ -1,7 +1,7 @@
 <?php
-namespace Agnostic\Metadata\Annotation;
+namespace Agnostic\Type\Annotation;
 
-use Agnostic\Metadata\Annotation\Annotation;
+use Agnostic\Type\Annotation\Annotation;
 
 /**
  * @Annotation
