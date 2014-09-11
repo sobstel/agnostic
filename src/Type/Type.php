@@ -57,6 +57,23 @@ class Type extends GenericType
         }
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @todo SMELL almost copied from parent
+     */
+    public function getCollection(array $identity_values)
+    {
+        $list = [];
+        foreach ($identity_values as $identity_value) {
+            if (isset($this->index_identity[$identity_value])) {
+                $offset = $this->index_identity[$identity_value];
+                $list[] =& $this->data[$offset];
+            }
+        }
+        return $this->collection_builder->newInstance($list);
+    }
+
     public function getRelation($name)
     {
         if (!isset($this->relations[$name])) {

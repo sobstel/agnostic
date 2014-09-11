@@ -33,7 +33,7 @@ class DoctrineQueryDriver implements QueryDriverInterface
 
     public function addWhereIn($queryBuilder, $field, array $values)
     {
-        $queryBuilder->where($queryBuilder->expr()->in($field, $values));
+        $queryBuilder->andWhere($queryBuilder->expr()->in($field, $values));
 
         return $queryBuilder;
     }

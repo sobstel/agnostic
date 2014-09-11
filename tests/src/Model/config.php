@@ -13,7 +13,7 @@ return [
     ],
     'city' => [
         'identity_field' => 'city_id',
-        'entity_class' => 'Agnostic\Tests\Model\City',
+        'entity_class' => 'Agnostic\Tests\Model\Entity\City',
         'relation_names' => [
             'country' => [
                 'relationship' => 'belongs_to'
