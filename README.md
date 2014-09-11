@@ -1,12 +1,18 @@
 Agnostic
 ========
 
-(work in progress)
+Status
+------
 
-Call `phpunit`. See `TemporaryTest`.
+Wwork in progress.
 
-* https://scrutinizer-ci.com/g/sobstel/agnostic/
-* https://travis-ci.org/sobstel/agnostic
+[x] Queries and relations work.
+[ ] Custom queries and scopes yet to be done.
+
+Examples
+--------
+
+** See: https://github.com/sobstel/agnostic/tree/master/tests/playground **
 
 <pre>
 $manager
@@ -16,13 +22,13 @@ $manager
     ->with(['events', 'teamA', 'teamB', 'round' => ['season' => 'competition']])
     ->fetch();
 
-string(115) "SELECT m.* FROM matches m WHERE match_id IN (57045, 157046, 156746, 156679, 156513, 156531) ORDER BY date_time DESC"
-string(83) "SELECT e.* FROM events e WHERE match_id IN (156531, 156513, 156679, 156746, 157046)"
-string(69) "SELECT t.* FROM teams t WHERE team_id IN (349, 1348, 1497, 1677, 424)"
-string(62) "SELECT t.* FROM teams t WHERE team_id IN (944, 514, 382, 1497)"
-string(68) "SELECT r.* FROM rounds r WHERE round_id IN (752, 747, 766, 776, 826)"
-string(65) "SELECT s.* FROM seasons s WHERE season_id IN (599, 602, 604, 614)"
-string(59) "SELECT c.* FROM competitions c WHERE competition_id IN (72)"
+SELECT m.* FROM matches m WHERE match_id IN (57045, 157046, 156746, 156679, 156513, 156531) ORDER BY date_time DESC
+SELECT e.* FROM events e WHERE match_id IN (156531, 156513, 156679, 156746, 157046)
+SELECT t.* FROM teams t WHERE team_id IN (349, 1348, 1497, 1677, 424)
+SELECT t.* FROM teams t WHERE team_id IN (944, 514, 382, 1497)
+SELECT r.* FROM rounds r WHERE round_id IN (752, 747, 766, 776, 826)
+SELECT s.* FROM seasons s WHERE season_id IN (599, 602, 604, 614)
+SELECT c.* FROM competitions c WHERE competition_id IN (72)
 
 156531: 1998-07-12 21:00:00: (World Cup - 1998 France - Final) Brazil v France  0 - 3
 156513: 1998-06-20 14:30:00: (World Cup - 1998 France - Group stage) Japan v n/a  0 - 1
@@ -36,3 +42,9 @@ Fixtures
 
 * http://dev.mysql.com/doc/sakila/en/sakila-structure.html
 * http://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html
+
+Quality checks
+--------------
+
+* https://scrutinizer-ci.com/g/sobstel/agnostic/
+* https://travis-ci.org/sobstel/agnostic
