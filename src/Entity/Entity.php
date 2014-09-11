@@ -15,7 +15,10 @@ class Entity extends GenericEntity
 
         foreach ($data as $key => $item) {
             if ($item instanceof \Aura\Marshal\Lazy\GenericLazy) {
-                $item = $item->get($this)->toArray();
+                $item = $item->get($this);
+                if ($item) {
+                    $item = $item->toArray();
+                }
             }
 
             $result[$key] = $item;

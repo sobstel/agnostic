@@ -27,7 +27,7 @@ class Registry
 
     protected static function importTypes()
     {
-        return include(__DIR__.'/../fixtures/types.php');
+        return include(__DIR__.'/Model/config.php');
     }
 
     public static function conn()

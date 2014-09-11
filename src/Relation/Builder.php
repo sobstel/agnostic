@@ -42,7 +42,7 @@ class Builder extends BaseBuilder
             }
 
             if ($info['relationship'] == 'has_many_through') {
-                // @todo
+                // @todo: native_field
             }
         }
 
@@ -64,7 +64,7 @@ class Builder extends BaseBuilder
             }
 
             if ($info['relationship'] == 'has_many_through') {
-                // @todo
+                // @todo: foreign_field
             }
         }
 
@@ -77,6 +77,10 @@ class Builder extends BaseBuilder
             $info['through'] = null;
             return;
         }
+
+        // @todo: auto 'through_type'
+        // @todo: auto 'through_native_field'
+        // @todo: auto 'through_foreign_field'
 
         parent::prepThrough($info, $manager);
     }

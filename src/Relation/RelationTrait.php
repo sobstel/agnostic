@@ -24,4 +24,19 @@ trait RelationTrait
     {
         return $this->foreign_field;
     }
+
+    public function getThrough()
+    {
+        return $this->through;
+    }
+
+    public function getThroughNativeField()
+    {
+        return $this->through_native_field;
+    }
+
+    public function getThroughForeignField()
+    {
+        return $this->through_foreign_field;
+    }
 }
