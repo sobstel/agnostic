@@ -5,14 +5,18 @@ use Aura\Marshal\Collection\GenericCollection;
 
 class Collection extends GenericCollection
 {
-    public function toArray()
+    // resolves lazy stuff
+    public function dump()
     {
-        $result = [];
+        $func_iterate = function ($col) use (&$func_iterate) {
+            if (is_array($col) || ($col instanceof \Traversable)) {
+                foreach ($col as $val) {
+                    $func_iterate($val);
+                }
+            }
+        };
+        $func_iterate($this);
 
-        foreach ($this->getIterator() as $item) {
-            $result[] = $item->toArray();
-        }
-
-        return $result;
+        return $this;
     }
 }

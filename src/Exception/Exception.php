@@ -1,5 +1,5 @@
 <?php
-namespace Agnostic;
+namespace Agnostic\Exception;
 
 class Exception extends \Exception
 {

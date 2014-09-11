@@ -2,28 +2,26 @@
 namespace Agnostic\Entity;
 
 use Aura\Marshal\Entity\GenericEntity;
-use Agnostic\Entity\MetadataBuilder;
+use Aura\Marshal\Lazy\LazyInterface;
+use Agnostic\Exception\MissingFieldException;
 
 class Entity extends GenericEntity
 {
-    public function toArray()
+    // original GenerictEntity misses "use Aura\Marshal\Lazy\LazyInterface;",
+    // so check for LazyInterface is never met
+    public function offsetGet($field)
     {
-        $result = [];
-        $data = $this->data;
-
-        $entity = $this;
-
-        foreach ($data as $key => $item) {
-            if ($item instanceof \Aura\Marshal\Lazy\GenericLazy) {
-                $item = $item->get($this);
-                if ($item) {
-                    $item = $item->toArray();
-                }
-            }
-
-            $result[$key] = $item;
+        if (!$this->offsetExists($field)) {
+            throw new MissingFieldException(sprintf('Entity "%s" has no value loaded for field "%s"', get_class($this), $field));
         }
 
-        return $result;
+        $value = $this->data[$field];
+
+        if ($value instanceof LazyInterface) {
+            $value = $value->get($this);
+            $this->offsetSet($field, $value);
+        }
+
+        return $value;
     }
 }

@@ -20,7 +20,7 @@ class Manager
     public function get($name = 'default')
     {
         if (!$this->exists($name)) {
-            throw new \Agnostic\Exception(sprintf('Query driver "%s" not defined, add it using Agnostic\Manager::getQueryDriverManager()->set() method', $name));
+            throw new \Agnostic\Exception\Exception(sprintf('Query driver "%s" not defined, add it using Agnostic\Manager::getQueryDriverManager()->set() method', $name));
         }
 
         return $this->query_drivers[$name];

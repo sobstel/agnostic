@@ -60,7 +60,7 @@ class Type extends GenericType
     public function getRelation($name)
     {
         if (!isset($this->relations[$name])) {
-            throw new \Agnostic\Exception(sprintf('Undefined relation "%s" for type "%s"', $name, $this->getName()));
+            throw new \Agnostic\Exception\Exception(sprintf('Undefined relation "%s" for type "%s"', $name, $this->getName()));
         }
         return parent::getRelation($name);
     }
