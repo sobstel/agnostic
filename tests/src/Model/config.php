@@ -5,6 +5,23 @@ return [
     ],
     'address' => [
         'identity_field' => 'address_id',
+        'relation_names' => [
+            'city' => [
+                'relationship' => 'belongs_to'
+            ]
+        ]
+    ],
+    'city' => [
+        'identity_field' => 'city_id',
+        'entity_class' => 'Agnostic\Tests\Model\City',
+        'relation_names' => [
+            'country' => [
+                'relationship' => 'belongs_to'
+            ]
+        ]
+    ],
+    'country' => [
+        'identity_field' => 'country_id',
     ],
     'film' => [
         'identity_field' => 'film_id',
