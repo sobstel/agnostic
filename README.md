@@ -30,3 +30,9 @@ string(59) "SELECT c.* FROM competitions c WHERE competition_id IN (72)"
 156746: 1978-06-10 00:00:00: (World Cup - 1978 Argentina - Group Stage 1) Poland v Mexico  3 - 1
 157046: 1930-07-16 17:45:00: (World Cup - 1930 Uruguay - Group stage) Chile v Mexico  3 - 0
 </pre>
+
+Fixtures
+--------
+
+* http://dev.mysql.com/doc/sakila/en/sakila-structure.html
+* http://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html

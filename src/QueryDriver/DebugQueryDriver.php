@@ -7,6 +7,8 @@ class DebugQueryDriver implements QueryDriverInterface
 {
     protected $inner_query_driver;
 
+    protected $queries;
+
     public function __construct(QueryDriverInterface $inner_query_driver)
     {
         $this->inner_query_driver = $inner_query_driver;
@@ -27,7 +29,22 @@ class DebugQueryDriver implements QueryDriverInterface
 
     public function fetchData($query, array $opts = [])
     {
-        var_dump((string)$query);
-        return $this->inner_query_driver->fetchData($query, $opts);
+        $start = microtime(true);
+
+        $result = $this->inner_query_driver->fetchData($query, $opts);
+
+        $time = microtime(true) - $start;
+
+        $this->queries[] = [
+            'query' => (string)$query,
+            'time' => $time
+        ];
+
+        return $result;
+    }
+
+    public function getQueries()
+    {
+        return $this->queries;
     }
 }

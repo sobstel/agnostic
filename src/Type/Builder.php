@@ -3,18 +3,21 @@ namespace Agnostic\Type;
 
 use Aura\Marshal\Type\Builder as BaseBuilder;
 use Agnostic\Entity\Builder as EntityBuilder;
+use Agnostic\Collection\Builder as CollectionBuilder;
 use Agnostic\Query\Builder as QueryBuilder;
-use Agnostic\QueryDriver\QueryDriverInterface;
+use Agnostic\QueryDriver\Manager as QueryDriverManager;
 
 class Builder extends BaseBuilder
 {
+    /*** @var string */
     protected $class = 'Agnostic\Type\Type';
 
-    protected $default_query_driver;
+    /*** @var QueryDriverManager */
+    protected $query_driver_manager;
 
-    public function __construct(QueryDriverInterface $query_driver)
+    public function __construct(QueryDriverManager $query_driver_manager)
     {
-        $this->default_query_driver = $query_driver;
+        $this->query_driver_manager = $query_driver_manager;
     }
 
     /**
@@ -26,6 +29,11 @@ class Builder extends BaseBuilder
             $info['entity_class'] = 'Agnostic\Entity\Entity';
         }
         $info['entity_builder'] = new EntityBuilder($info['entity_class']);
+
+        if (!isset($info['collection_class'])) {
+            $info['collection_class'] = 'Agnostic\Collection\Collection';
+        }
+        $info['collection_builder'] = new CollectionBuilder($info['collection_class']);
 
         if (!isset($info['identity_field'])) {
             $info['identity_field'] = 'id';
@@ -55,7 +63,10 @@ class Builder extends BaseBuilder
         }
         $type->setQueryBuilder(new QueryBuilder($info['query_class']));
 
-        $type->setQueryDriver($this->default_query_driver);
+        if (!isset($info['query_driver'])) {
+            $info['query_driver'] = 'default';
+        }
+        $type->setQueryDriver($this->query_driver_manager->get($info['query_driver']));
 
         return $type;
     }

@@ -8,15 +8,19 @@ class Entity extends GenericEntity
 {
     public function toArray()
     {
+        $result = [];
         $data = $this->data;
 
-        $data = array_filter($data, function($val){
-            if ($val instanceof \Aura\Marshal\Lazy\GenericLazy) {
-                return false;
-            }
-            return true;
-        });
+        $entity = $this;
 
-        return $data;
+        foreach ($data as $key => $item) {
+            if ($item instanceof \Aura\Marshal\Lazy\GenericLazy) {
+                $item = $item->get($this)->toArray();
+            }
+
+            $result[$key] = $item;
+        }
+
+        return $result;
     }
 }

@@ -14,7 +14,12 @@
         "php": ">=5.4.0",
         "aura/marshal": "~1.2",
         "doctrine/inflector": "1.0.*@dev",
-        "doctrine/dbal": "~2.4"
+        "illuminate/database": "4.2.*",
+        "doctrine/dbal": "2.4.*"
+    },
+    "suggest": {
+        "illuminate/database": "Laravel query driver",
+        "doctrine/dbal": "Doctrine query driver"
     },
     "autoload": {
         "psr-4": {

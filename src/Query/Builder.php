@@ -3,13 +3,9 @@ namespace Agnostic\Query;
 
 class Builder
 {
-    protected $default_class = 'Agnostic\Query\Query';
-
-    public function __construct($class = null)
+    public function __construct($class)
     {
-        if ($class) {
-            $this->class = $class;
-        }
+        $this->class = $class;
     }
 
     /**
