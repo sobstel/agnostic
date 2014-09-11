@@ -50,6 +50,13 @@ class Type extends GenericType
         $this->query_driver = $query_driver;
     }
 
+    public function addIndexField($index_field)
+    {
+        if (!isset($this->index_fields[$index_field])) {
+            $this->index_fields[$index_field] = [];
+        }
+    }
+
     public function getRelation($name)
     {
         if (!isset($this->relations[$name])) {

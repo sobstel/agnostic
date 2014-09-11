@@ -30,6 +30,8 @@ class Builder extends BaseBuilder
         }
 
         parent::prepNative($info, $manager);
+
+        $manager->getType($info['type'])->addIndexField($info['native_field']);
     }
 
     protected function prepForeign(&$info, BaseManager $manager)
@@ -48,6 +50,8 @@ class Builder extends BaseBuilder
         }
 
         parent::prepForeign($info, $manager);
+
+        $info['foreign']->addIndexField($info['foreign_field']);
     }
 
     protected function prepThrough(&$info, BaseManager $manager)
@@ -73,5 +77,8 @@ class Builder extends BaseBuilder
         }
 
         parent::prepThrough($info, $manager);
+
+        $info['through']->addIndexField($info['through_native_field']);
+        $info['through']->addIndexField($info['through_foreign_field']);
     }
 }
