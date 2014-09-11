@@ -1,50 +1,103 @@
 <?php
 namespace Agnostic\Query;
 
-use Agnostic\Metadata\Metadata;
 use Agnostic\QueryDriver\QueryDriverInterface;
-use Agnostic\Query\Factory as QueryFactory;
-use Agnostic\Marshal\Manager as MarshalManager;
-
 use IteratorAggregate;
 use ArrayIterator;
+use Doctrine\Common\Inflector\Inflector;
 
-class Query implements IteratorAggregate
+use Agnostic\Type\Type;
+
+class Query
 {
-    protected $relatedNames = [];
+    protected $type;
 
-    /**
-     * @param mixed
-     * @return Query
-     */
-    public function with($relatedName)
+    /*** @var QueryDriverInterface */
+    protected $query_driver;
+
+    protected $table_name;
+
+    /*** @var object */
+    protected $query;
+
+    protected $opts = [];
+
+    public function __construct(Type $type, QueryDriverInterface $query_driver)
     {
-        $this->relatedNames[] = $relatedName;
+        $this->type = $type;
+        $this->query_driver = $query_driver;
 
-        // if (is_array($spec)) {
-        //     $names = $spec;
-        // } else {
-        //     $names = [$spec];
-        // }
+        $this->query = $query_driver->createQuery($this->getTableName());
+    }
 
-        // foreach ($names as $name) {
-            // $this->related = $name;
-        // }
+    public function setTableName($table_name)
+    {
+        $this->table_name = $table_name;
+    }
 
-        // foreach ($names as $k => $v) {
-        //     $isNestedSpec = (!is_int($k));
+    public function getTableName()
+    {
+        if (!$this->table_name) {
+            $this->table_name = $this->type->getName();
+        }
 
-        //     $name = $isNestedSpec ? $k : $v;
+        return $this->table_name;
+    }
 
-        //     $relationMetadata = $this->metadata['relations'][$name];
-        //     $targetQuery = $this->queryFactory->create($relationMetadata['targetEntity']);
-        //     $this->queryStack->add($name, $targetQuery);
-
-        //     if ($isNestedSpec) {
-        //         $targetQuery->with($v);
-        //     }
-        // }
+    public function findBy($field, array $values)
+    {
+        $this->query_driver->addWhereIn($this, $field, $values);
 
         return $this;
+    }
+
+    public function find(array $values)
+    {
+        $this->findBy($this->type->getIdentityField(), $values);
+
+        return $this;
+    }
+
+    public function opts(array $opts)
+    {
+        $this->opts = array_merge($this->opts, $opts);
+    }
+
+    // flush
+    public function fetch(array $opts = [])
+    {
+        $opts = array_merge($this->opts, $opts);
+        $data = $this->query_driver->fetchData($this->query, $opts);
+        $ids = $this->type->load($data);
+        $collection = $this->type->getCollection($ids);
+        return $collection;
+    }
+
+    public function __call($name, $args)
+    {
+        $result = call_user_func_array([$this->query, $name], $args);
+
+        // only query should be "decorated"/"proxied"
+        // othewise return original query
+        if ($result !== $this->query) {
+            return $result;
+        }
+
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->query->__toString();
+    }
+
+    public function __invoke(array $opts = [])
+    {
+        return $this->fetch($opts);
+    }
+
+    public function getIterator()
+    {
+        return new ArrayIterator($this->fetch());
     }
 }
