@@ -11,11 +11,7 @@ return [
         'relation_names' => [
             'actors' => [
                 'relationship' => 'has_many_through',
-                'native_field' => 'film_id',
-                'through_type' => 'film_actor',
-                'through_native_field' => 'film_id',
-                'through_foreign_field' => 'actor_id',
-                'foreign_field' => 'actor_id',
+                // 'through_type' => 'film_actor',
                 'foreign_type' => 'actor'
             ],
             'language' => [
@@ -24,11 +20,7 @@ return [
             ],
             'stores' => [
                 'relationship' => 'has_many_through',
-                'native_field' => 'film_id',
                 'through_type' => 'inventory',
-                'through_native_field' => 'film_id',
-                'through_foreign_field' => 'store_id',
-                'foreign_field' => 'store_id',
                 'foreign_type' => 'store',
             ],
         ]

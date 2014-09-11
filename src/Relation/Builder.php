@@ -14,19 +14,6 @@ class Builder extends BaseBuilder
         'has_many_through' => 'Agnostic\Relation\HasManyThrough',
     ];
 
-    protected function prepRelationship(&$info, BaseManager $manager)
-    {
-        if (!isset($info['relationship'])) {
-            if ($info['name'] == Inflector::singularize($info['name'])) { // singular: guess belongs_to
-                $info['relationship'] = 'belongs_to';
-            } elseif ($info['name'] == Inflector::pluralize($info['name'])) { // plural: guess has_many
-                $info['relationship'] = 'has_many';
-            }
-        }
-
-        parent::prepRelationship($info, $manager);
-    }
-
     protected function prepNative(&$info, BaseManager $manager)
     {
         if (!isset($info['native_field'])) {
@@ -37,12 +24,8 @@ class Builder extends BaseBuilder
                 $info['native_field'] = sprintf('%s_id', Inflector::singularize($foreign_type->getTableName()));
             }
 
-            if ($info['relationship'] == 'has_many' || $info['relationship'] == 'has_one') {
+            if (in_array($info['relationship'], ['has_many', 'has_one', 'has_many_through'])) {
                 $info['native_field'] = $type->getIdentityField();
-            }
-
-            if ($info['relationship'] == 'has_many_through') {
-                // @todo: native_field
             }
         }
 
@@ -59,12 +42,8 @@ class Builder extends BaseBuilder
                 $info['foreign_field'] = $foreign_type->getIdentityField();
             }
 
-            if ($info['relationship'] == 'has_many' || $info['relationship'] == 'has_one') {
-                $info['foreign_field'] = sprintf('%s_id', Inflector::singularize($type->getTableName()));
-            }
-
-            if ($info['relationship'] == 'has_many_through') {
-                // @todo: foreign_field
+            if (in_array($info['relationship'], ['has_many', 'has_one', 'has_many_through'])) {
+                $info['foreign_field'] = sprintf('%s_id', Inflector::singularize($foreign_type->getTableName()));
             }
         }
 
@@ -78,9 +57,20 @@ class Builder extends BaseBuilder
             return;
         }
 
-        // @todo: auto 'through_type'
-        // @todo: auto 'through_native_field'
-        // @todo: auto 'through_foreign_field'
+        $type = $manager->getType($info['type']);
+        $foreign_type = $manager->getType($info['foreign_type']);
+
+        if (!isset($info['through_type'])) {
+            $info['through_type'] = sprintf('%s_%s', $type->getName(), $foreign_type->getName());
+        }
+
+        if (!isset($info['through_native_field'])) {
+            $info['through_native_field'] = $info['native_field'];
+        }
+
+        if (!isset($info['through_foreign_field'])) {
+            $info['through_foreign_field'] = $info['foreign_field'];
+        }
 
         parent::prepThrough($info, $manager);
     }
