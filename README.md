@@ -4,7 +4,7 @@ Agnostic
 Status
 ------
 
-Wwork in progress.
+Work in progress.
 
 - [x] Queries and relations work.
 - [ ] Custom queries and scopes yet to be done.
@@ -48,3 +48,10 @@ Quality checks
 
 * https://scrutinizer-ci.com/g/sobstel/agnostic/
 * https://travis-ci.org/sobstel/agnostic
+
+Thanks
+------
+
+* Paul M. Jones
+* Robert Trzewiczek
+

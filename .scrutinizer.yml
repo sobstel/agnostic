@@ -1,0 +1,19 @@
+filter:
+    paths:
+        - src/*
+
+tools:
+    php_analyzer: true
+    php_code_sniffer: true
+    php_mess_detector: true
+    php_sim:
+        min_mass: 30
+    php_pdepend: true
+    php_changetracking: false
+    # sensiolabs_security_checker: true
+
+checks:
+    php:
+        code_rating: true
+        duplication: true
+
