@@ -6,8 +6,8 @@ Status
 
 Wwork in progress.
 
-[x] Queries and relations work.
-[ ] Custom queries and scopes yet to be done.
+- [x] Queries and relations work.
+- [ ] Custom queries and scopes yet to be done.
 
 Examples
 --------
