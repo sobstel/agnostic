@@ -3,20 +3,29 @@ namespace Agnostic\Type;
 
 use Aura\Marshal\Type\Builder as BaseBuilder;
 use Agnostic\Entity\Builder as EntityBuilder;
-// use Doctrine\Common\Inflector\Inflector;
+use Agnostic\Query\Builder as QueryBuilder;
+use Agnostic\QueryDriver\QueryDriverInterface;
 
 class Builder extends BaseBuilder
 {
     protected $class = 'Agnostic\Type\Type';
+
+    protected $default_query_driver;
+
+    public function __construct(QueryDriverInterface $query_driver)
+    {
+        $this->default_query_driver = $query_driver;
+    }
+
     /**
      * @return \Agnostic\Type\Type
      */
     public function newInstance($info)
     {
         if (!isset($info['entity_class'])) {
-            $entity_class = 'Agnostic\Entity\Entity';
+            $info['entity_class'] = 'Agnostic\Entity\Entity';
         }
-        $info['entity_builder'] = new EntityBuilder($entity_class);
+        $info['entity_builder'] = new EntityBuilder($info['entity_class']);
 
         if (!isset($info['identity_field'])) {
             $info['identity_field'] = 'id';
@@ -35,6 +44,18 @@ class Builder extends BaseBuilder
         );
 
         $type->setName($info['name']);
+
+        if (!isset($info['table_name'])) {
+            $info['table_name'] = $info['name'];
+        }
+        $type->setTableName($info['table_name']);
+
+        if (!isset($info['query_class'])) {
+            $info['query_class'] = 'Agnostic\Query\Query';
+        }
+        $type->setQueryBuilder(new QueryBuilder($info['query_class']));
+
+        $type->setQueryDriver($this->default_query_driver);
 
         return $type;
     }

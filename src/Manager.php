@@ -2,37 +2,33 @@
 namespace Agnostic;
 
 use Aura\Marshal\Manager as BaseManager;
-use Agnostic\QueryDriver\QueryDriverInterface;
 use Agnostic\Type\Builder as TypeBuilder;
 use Agnostic\Relation\Builder as RelationBuilder;
-use Agnostic\Config\Reader as ConfigReader;
-
-use Agnostic\Query\Query;
+use Agnostic\QueryDriver\QueryDriverInterface;
 
 class Manager extends BaseManager
 {
-    protected $query_driver;
-
     public function __construct(QueryDriverInterface $query_driver)
     {
-        $type_builder = new TypeBuilder;
+        $type_builder = new TypeBuilder($query_driver);
         $relation_builder = new RelationBuilder;
 
         parent::__construct($type_builder, $relation_builder);
-
-        $this->query_driver = $query_driver;
     }
 
+    /**
+     * @return Query
+     */
     public function query($name)
     {
-        $query = new Query($this->getType($name), $this->query_driver);
-        return $query;
+        return $this->getType($name)->query();
     }
-
 
     public function __get($name)
     {
-        // @todo: lazy loaded
+        if (!isset($this->types[$name])) {
+            $this->setType($name, []);
+        }
         return parent::__get($name);
     }
 
@@ -44,6 +40,7 @@ class Manager extends BaseManager
     protected function buildType($name)
     {
         $this->types[$name]['name'] = $name;
+
         return parent::buildType($name);
     }
 }
