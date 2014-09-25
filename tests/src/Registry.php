@@ -26,6 +26,10 @@ class Registry
             $query_driver = new \Agnostic\QueryDriver\IlluminateQueryDriver();
             self::$manager->getQueryDriverManager()->set($query_driver, 'illuminate');
 
+            // handler
+            $query_driver = new \Agnostic\QueryDriver\HandlerQueryDriver(self::conn());
+            self::$manager->getQueryDriverManager()->set($query_driver, 'handler');
+
             // default
             self::$manager->getQueryDriverManager()->alias('default', 'doctrine');
         }
