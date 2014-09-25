@@ -8,9 +8,11 @@ class Manager
 {
     protected $query_drivers = [];
 
-    public function set(QueryDriverInterface $query_driver, $name = 'default', $debug = false)
+    protected $debug = false;
+
+    public function set(QueryDriverInterface $query_driver, $name = 'default')
     {
-        if ($debug) {
+        if ($this->debug) {
             $query_driver = new DebugQueryDriver($query_driver);
         }
 
@@ -34,5 +36,10 @@ class Manager
     public function alias($name, $target)
     {
         $this->query_drivers[$name] = $this->get($target);
+    }
+
+    public function debug($debug = true)
+    {
+        $this->debug = $debug;
     }
 }

@@ -14,34 +14,41 @@ class DoctrineQueryDriver implements QueryDriverInterface
     }
 
     /**
+     * {@inheritdoc}
+     *
      * @return Doctrine\DBAL\Query\QueryBuilder
      */
-    public function createQuery($tableName = null)
+    public function createQuery($table_name = null)
     {
-        $queryBuilder = $this->conn->createQueryBuilder();
+        $query_builder = $this->conn->createQueryBuilder();
 
-        if ($tableName) {
-            $rootAlias = substr($tableName, 0, 1);
-            $queryBuilder
-                ->select(sprintf('%s.*', $rootAlias))
-                ->from($tableName, $rootAlias)
+        if ($table_name) {
+            $root_alias = substr($table_name, 0, 1);
+            $query_builder
+                ->select(sprintf('%s.*', $root_alias))
+                ->from($table_name, $root_alias)
                 ;
         }
 
-        return $queryBuilder;
+        return $query_builder;
     }
 
-    public function addWhereIn($queryBuilder, $field, array $values)
+    public function addWhereIn($query_builder, $field, array $values)
     {
-        $queryBuilder->andWhere($queryBuilder->expr()->in($field, $values));
+        $query_builder->andWhere($query_builder->expr()->in($field, $values));
 
-        return $queryBuilder;
+        return $query_builder;
     }
 
-    public function fetchData($queryBuilder, array $opts = [])
+    public function fetchData($query_builder, array $opts = [])
     {
-        $stmt = $queryBuilder->execute();
+        $stmt = $query_builder->execute();
         $data = $stmt->fetchAll();
         return $data;
+    }
+
+    public function toSql($query_builder)
+    {
+        return (string)$query_builder;
     }
 }

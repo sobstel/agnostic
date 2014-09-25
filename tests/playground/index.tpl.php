@@ -30,7 +30,7 @@
             <header>Queries</header>
             <div>
             <?php foreach ($queries as $query): ?>
-                <?php echo $query['query'] ?> (<?php echo number_format($query['time'], 6); ?>s)<br/>
+                <?php echo $query['query'] ?> (<?php echo number_format($query['time'], 6); ?>s) [<?php echo $query['driver'] ?>]<br/>
             <?php endforeach; ?>
             </div>
         </section>

@@ -9,7 +9,7 @@ $active_item = (isset($catalog[$active_item_name]) ? $catalog[$active_item_name]
 if ($active_item) {
     $manager = Registry::manager();
     $result = require $active_item['file'];
-    $queries = Registry::manager()->getQueryDriverManager()->get()->getQueries();
+    $queries = \Agnostic\QueryDriver\DebugQueryDriver::getQueries();
 }
 
 require __DIR__.'/index.tpl.php';

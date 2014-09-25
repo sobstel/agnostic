@@ -23,4 +23,11 @@ interface QueryDriverInterface
      * @param object Query object
      */
     public function fetchData($nativeQuery, array $opts = []);
+
+    /**
+     * Converts to raw SQL string.
+     *
+     * @param object Query object
+     */
+    public function toSql($nativeQuery);
 }

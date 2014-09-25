@@ -1,6 +1,7 @@
-4<?php
+<?php
 namespace Agnostic\QueryDriver;
 
-class PDOQuery
+class StringQuery
 {
+    // ..
 }

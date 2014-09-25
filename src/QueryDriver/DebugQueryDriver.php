@@ -7,7 +7,7 @@ class DebugQueryDriver implements QueryDriverInterface
 {
     protected $inner_query_driver;
 
-    protected $queries;
+    protected static $queries;
 
     public function __construct(QueryDriverInterface $inner_query_driver)
     {
@@ -35,16 +35,22 @@ class DebugQueryDriver implements QueryDriverInterface
 
         $time = microtime(true) - $start;
 
-        $this->queries[] = [
-            'query' => (string)$query,
+        self::$queries[] = [
+            'driver' => str_replace(['Agnostic\QueryDriver\\', 'QueryDriver'], '', get_class($this->inner_query_driver)),
+            'query' => $this->toSql($query),
             'time' => $time
         ];
 
         return $result;
     }
 
-    public function getQueries()
+    public function toSql($query)
     {
-        return $this->queries;
+        return $this->inner_query_driver->toSql($query);
+    }
+
+    public static function getQueries()
+    {
+        return self::$queries;
     }
 }
