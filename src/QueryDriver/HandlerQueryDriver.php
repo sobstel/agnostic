@@ -19,7 +19,7 @@ class HandlerQueryDriver implements QueryDriverInterface
      */
     public function createQuery($table_name = null)
     {
-        $raw_query = new RawQuery($table_name);
+        $raw_query = new RawQuery;
 
         if ($table_name) {
             $raw_query->add(sprintf('HANDLER %s ', $table_name));
@@ -36,12 +36,12 @@ class HandlerQueryDriver implements QueryDriverInterface
 
     public function fetchData($raw_query, array $opts = [])
     {
-        $this->conn->query(sprintf('HANDLER %s OPEN', $raw_query->getName()));
+        // $this->conn->query(sprintf('HANDLER %s OPEN', $raw_query->getName()));
 
         $stmt = $this->conn->query($raw_query->get());
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        $this->conn->query(sprintf('HANDLER %s CLOSE', $raw_query->getName()));
+        // $this->conn->query(sprintf('HANDLER %s CLOSE', $raw_query->getName()));
 
         return $result;
     }

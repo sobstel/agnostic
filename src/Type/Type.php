@@ -82,11 +82,11 @@ class Type extends GenericType
         return parent::getRelation($name);
     }
 
-    public function query()
+    public function query(QueryDriverInterface $query_driver = null)
     {
         $info = [
             'type' => $this,
-            'query_driver' => $this->query_driver,
+            'query_driver' => $query_driver ?: $this->query_driver,
         ];
         return $this->query_builder->newInstance($info);
     }

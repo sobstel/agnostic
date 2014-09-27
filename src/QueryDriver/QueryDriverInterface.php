@@ -5,29 +5,29 @@ interface QueryDriverInterface
 {
     /**
      * @param string
-     * @return object Query object
+     * @return object
      */
-    public function createQuery($tableName = null);
+    public function createQuery($table_name = null);
 
     /**
      * @param object
      * @param string
      * @param array
-     * @return object Query object
+     * @return object
      */
-    public function addWhereIn($nativeQuery, $field, array $values);
+    public function addWhereIn($query_builder, $field, array $values);
 
     /**
      * Fetches data from query object
      *
      * @param object Query object
      */
-    public function fetchData($nativeQuery, array $opts = []);
+    public function fetchData($query_builder, array $opts = []);
 
     /**
      * Converts to raw SQL string.
      *
      * @param object Query object
      */
-    public function toSql($nativeQuery);
+    public function toSql($query_builder);
 }

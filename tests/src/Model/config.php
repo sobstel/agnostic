@@ -14,6 +14,7 @@ return [
     'city' => [
         'identity_field' => 'city_id',
         'entity_class' => 'Agnostic\Tests\Model\Entity\City',
+        'query_driver' => 'raw',
         'relation_names' => [
             'country' => [
                 'relationship' => 'belongs_to'

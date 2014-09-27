@@ -27,11 +27,13 @@ class Manager extends BaseManager
 
     /**
      * @param string Type name
-     * @return Query
+     * @param string (optional) Query driver name
+     * @return \Agnostic\Query\Query
      */
-    public function query($name)
+    public function query($name, $query_driver_name = null)
     {
-        return $this->getType($name)->query();
+        $query_driver = $query_driver_name ? $this->query_driver_manager->get($query_driver_name) : null;
+        return $this->getType($name)->query($query_driver);
     }
 
     public function __get($name)
