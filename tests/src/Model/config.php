@@ -23,10 +23,12 @@ return [
     ],
     'country' => [
         'identity_field' => 'country_id',
-        'query_driver' => 'illuminate',
+        // 'query_driver' => 'illuminate',
     ],
     'film' => [
         'identity_field' => 'film_id',
+        'entity_class' => 'Agnostic\Tests\Model\Entity\Film',
+        'collection_class' => 'Agnostic\Tests\Model\Collection\Film',
         'relation_names' => [
             'actors' => [
                 'relationship' => 'has_many_through',
