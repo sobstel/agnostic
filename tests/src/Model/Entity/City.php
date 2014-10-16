@@ -1,8 +1,9 @@
 <?php
 namespace Agnostic\Tests\Model\Entity;
 
-use Agnostic\Entity\Entity;
+use Agnostic\Entity\EntityTrait;
 
-class City extends Entity
+class City
 {
+    use EntityTrait;
 }

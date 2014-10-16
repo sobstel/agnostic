@@ -1,8 +1,9 @@
 <?php
 namespace Agnostic\Tests\Model\Entity;
 
-use Agnostic\Entity\Entity;
+use Agnostic\Entity\EntityTrait;
 
-class Film extends Entity
+class Film
 {
+    use EntityTrait;
 }

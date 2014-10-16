@@ -5,9 +5,16 @@ use Aura\Marshal\Collection\BuilderInterface;
 
 class Builder implements BuilderInterface
 {
-    protected $class;
+    protected $class = 'Agnostic\Collection\Collection';
 
-    public function __construct($class)
+    public function __construct($class = null)
+    {
+        if ($class) {
+            $this->setClass($class);
+        }
+    }
+
+    public function setClass($class)
     {
         $this->class = $class;
     }

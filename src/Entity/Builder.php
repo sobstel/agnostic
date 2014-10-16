@@ -11,8 +11,13 @@ class Builder implements BuilderInterface
     public function __construct($class = null)
     {
         if ($class) {
-            $this->class = $class;
+            $this->setClass($class);
         }
+    }
+
+    public function setClass($class)
+    {
+        $this->class = $class;
     }
 
     public function newInstance(array $data)

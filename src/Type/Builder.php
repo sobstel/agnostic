@@ -25,15 +25,8 @@ class Builder extends BaseBuilder
      */
     public function newInstance($info)
     {
-        if (!isset($info['entity_class'])) {
-            $info['entity_class'] = 'Agnostic\Entity\Entity';
-        }
-        $info['entity_builder'] = new EntityBuilder($info['entity_class']);
-
-        if (!isset($info['collection_class'])) {
-            $info['collection_class'] = 'Agnostic\Collection\Collection';
-        }
-        $info['collection_builder'] = new CollectionBuilder($info['collection_class']);
+        $this->ensureEntityBuilder($info);
+        $this->ensureCollectionBuilder($info);
 
         if (!isset($info['identity_field'])) {
             $info['identity_field'] = 'id';
@@ -69,5 +62,30 @@ class Builder extends BaseBuilder
         $type->setQueryDriver($this->query_driver_manager->get($info['query_driver']));
 
         return $type;
+    }
+
+    /**
+     * @param array
+     */
+    protected function ensureEntityBuilder(array &$info)
+    {
+        if (!isset($info['entity_builder'])) {
+            $info['entity_builder'] = new EntityBuilder;
+        }
+        if (!isset($info['entity_class'])) {
+            $info['entity_class'] = 'Agnostic\Entity\Entity';
+        }
+        $info['entity_builder']->setClass($info['entity_class']);
+    }
+
+    protected function ensureCollectionBuilder(array &$info)
+    {
+        if (!isset($info['collection_builder'])) {
+            $info['collection_builder'] = new CollectionBuilder;
+        }
+        if (!isset($info['collection_class'])) {
+            $info['collection_class'] = 'Agnostic\Collection\Collection';
+        }
+        $info['collection_builder']->setClass($info['collection_class']);
     }
 }
