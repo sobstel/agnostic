@@ -2,8 +2,6 @@
 namespace Agnostic\Type;
 
 use Aura\Marshal\Type\Builder as BaseBuilder;
-use Agnostic\Entity\Builder as EntityBuilder;
-use Agnostic\Collection\Builder as CollectionBuilder;
 use Agnostic\Query\Builder as QueryBuilder;
 use Agnostic\QueryDriver\Manager as QueryDriverManager;
 
@@ -69,8 +67,12 @@ class Builder extends BaseBuilder
      */
     protected function ensureEntityBuilder(array &$info)
     {
+        if (!isset($info['entity_builder_class'])) {
+            $info['entity_builder_class'] = 'Agnostic\Entity\Builder';
+        }
         if (!isset($info['entity_builder'])) {
-            $info['entity_builder'] = new EntityBuilder;
+            $entity_builder_class = $info['entity_builder_class'];
+            $info['entity_builder'] = new $entity_builder_class;
         }
         if (!isset($info['entity_class'])) {
             $info['entity_class'] = 'Agnostic\Entity\Entity';
@@ -80,8 +82,12 @@ class Builder extends BaseBuilder
 
     protected function ensureCollectionBuilder(array &$info)
     {
+        if (!isset($info['collection_builder_class'])) {
+            $info['collection_builder_class'] = 'Agnostic\Collection\Builder';
+        }
         if (!isset($info['collection_builder'])) {
-            $info['collection_builder'] = new CollectionBuilder;
+            $collection_builder_class = $info['collection_builder_class'];
+            $info['collection_builder'] = new $collection_builder_class;
         }
         if (!isset($info['collection_class'])) {
             $info['collection_class'] = 'Agnostic\Collection\Collection';
