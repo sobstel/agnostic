@@ -36,7 +36,7 @@
         </section>
         <section>
             <header>Result</header>
-            <?php var_dump($result->dump()); ?>
+            <?php var_dump($result->toArray()); ?>
         </section>
     <?php endif; ?>
     </article>

@@ -1,16 +1,17 @@
 <?php
 namespace Agnostic\Entity;
 
+use Agnostic\ArrayableTrait;
+use Agnostic\Exception\MissingFieldException;
 use Aura\Marshal\Entity\MagicArrayAccessTrait;
 use Aura\Marshal\Lazy\LazyInterface;
-use Agnostic\Exception\MissingFieldException;
-use DataIterator;
 
 trait EntityTrait
 {
     use MagicArrayAccessTrait;
+    use ArrayableTrait;
 
-    protected $data = [];
+    private $data = [];
 
     public function offsetExists($key)
     {
@@ -50,6 +51,6 @@ trait EntityTrait
 
     public function getIterator()
     {
-        return new DataIterator($this, array_keys($this->data));
+        return new \ArrayIterator($this->data);
     }
 }
