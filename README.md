@@ -1,18 +1,25 @@
 Agnostic
 ========
 
-Status
-------
+PHP Non-ORM for those scared off by complexity, slowness and strictness of Doctrine
+(which makes programming hardly a pressure), but still want more control than
+any ActiveRecord-like ORM gives.
 
-Work in progress.
+Your queries (any engine allowed... Doctrine DBAL, Laravel database, plain SQL query).
+Our mapping to objects + scalable bulletproof relations loading.
 
-- [x] Queries and relations work.
-- [ ] Custom queries and scopes yet to be done.
+It's a bit like Aura.Marshal (wich it uses internally) on steroids (more convention
+over configuration, less writing, more magic).
+
+Still needs to be more polished, tested and documented.
 
 Examples
 --------
 
 ** See: https://github.com/sobstel/agnostic/tree/master/tests/playground **
+
+Old example
+-----------
 
 <pre>
 $manager
