@@ -15,8 +15,6 @@ class Query
     /*** @var QueryDriverInterface */
     protected $query_driver;
 
-    protected $table_name;
-
     /*** @var object */
     protected $query;
 

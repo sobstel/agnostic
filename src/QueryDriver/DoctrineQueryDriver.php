@@ -23,7 +23,8 @@ class DoctrineQueryDriver implements QueryDriverInterface
         $query_builder = $this->conn->createQueryBuilder();
 
         if ($table_name) {
-            $root_alias = substr($table_name, 0, 1);
+            preg_match_all("/(?<=_|^)[a-z]/", strtolower($table_name), $matches);
+            $root_alias = join("", $matches[0]);
             $query_builder
                 ->select(sprintf('%s.*', $root_alias))
                 ->from($table_name, $root_alias)
