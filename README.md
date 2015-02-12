@@ -44,6 +44,43 @@ SELECT c.* FROM competitions c WHERE competition_id IN (72)
 157046: 1930-07-16 17:45:00: (World Cup - 1930 Uruguay - Group stage) Chile v Mexico  3 - 0
 </pre>
 
+Random notes
+------------
+
+* any query builder you want
+* multiple entities might be stored in different storages easily (no joins)
+* having way to query database flexible way yet having entities and collections
+* all or n+1 issue solved (http://webadvent.org/2011/a-stitch-in-time-saves-nine-by-paul-jones,
+  http://auraphp.com/blog/2014/02/17/aura-marshal/)
+* prefers convention over configuration, a bit more magic and convenience
+* Agnostic is like Doctrine, but more flexible and less strict
+* Agnostic is like Aura.Marshal, but easier and faster to use
+* Lightweight CPU-firendly hydration -> Getting rid of CPU-heavy complex hydration
+* Maximum query building flexibility (no strict ORM query builder rules) -> easy to write scalable/fast
+  queries -> possible to write ANY query
+* Querying by PK (low cost, easy to cache and have shared cache)
+* SELECT * -> http://use-the-index-luke.com/de/blog/2013-08/its-not-about-the-star-stupid
+* easier to lavarege HANDLER https://mariadb.com/kb/en/handler-commands/
+* possible to use without entities (just type names)
+* Entity != tableName, it's more like one row of resultset
+* caveats: no support for compound keys
+
+Join decomposition
+------------------
+
+Many high-performance web sites use join decomposition. It's done by running multiple single-table
+queries instead of a multitable join, and then performing the join in the application.
+
+Gains are:
+
+* caching can be more efficient,
+* for MyISAM tables it use table locks more efficiently,
+* doing joins in the application makes it easier to scale the database by placing tables on different servers,
+* queries themselves can be more efficient (using an IN list instead of a join lets MySQL sort row IDs and
+  retrieve rows more optimally than might be possible with a join),
+* it can reduce redundant row accesses (the total network traffic and memory usage),
+* we can easily switch/use in-between key-value storage or use in-built Percona Server optimizations.
+
 Fixtures
 --------
 
