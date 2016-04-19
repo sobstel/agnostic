@@ -2,7 +2,7 @@ Agnostic
 ========
 
 PHP Non-ORM for those scared off by complexity, slowness and strictness of Doctrine
-(which makes programming hardly a pressure), but still want more control than
+(which makes programming hardly a pleasure), but still want more control than
 any ActiveRecord-like ORM gives.
 
 Your queries (any engine allowed... Doctrine DBAL, Laravel database, plain SQL query).
